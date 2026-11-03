@@ -144,6 +144,57 @@ El póster actualizado destaca la comparación de modelos con barras, muestra el
 
 En la aplicación, las cifras principales aparecen en indicadores grandes. Al consultar consumo también se muestra la energía por circuito, con la generación solar diferenciada en otro color. Puedes usar **Copiar respuesta** o **Descargar JSON** para conservar el resultado y sus parámetros. **Ctrl + Enter** ejecuta una consulta desde el campo de texto. El mensaje de espera identifica el modelo seleccionado.
 
+## Preguntas que puedes hacerle al chat
+
+Puedes copiar estas preguntas directamente. Usan el edificio de demostración y la fecha con datos preparados. Haz una pregunta a la vez.
+
+### Edificios y medidores
+
+- ¿Qué edificios puedo analizar?
+- Muéstrame los medidores del edificio de demostración.
+- ¿Cuáles son las instalaciones registradas?
+
+### Consumo y generación solar
+
+- Resume el consumo del 2 de marzo de 2026.
+- ¿Cuántos kWh consumió el edificio el 2026-03-02?
+- ¿Cuánta energía solar se generó el 2 de marzo de 2026?
+- ¿Cuál fue la demanda máxima del edificio el 2026-03-02?
+- Muéstrame el consumo por circuito del día de demostración.
+- ¿Cuál fue la demanda promedio el 2 de marzo de 2026?
+
+### Anomalías y comportamientos inusuales
+
+- Detecta anomalías del 2026-03-02.
+- Busca consumos raros en los equipos el día de demostración.
+- ¿Hubo picos inusuales el 2 de marzo de 2026?
+- Revisa si el aire acondicionado tuvo un comportamiento atípico el 2026-03-02.
+- Busca anomalías en las luces del edificio el 2 de marzo de 2026.
+
+### Horarios y ahorro
+
+- Optimiza los horarios del 2026-03-02 con la tarifa demo.
+- ¿A qué hora conviene encender las cargas para pagar menos el 2 de marzo de 2026?
+- Busca la programación más barata para las cargas flexibles del día de demostración.
+- ¿Cuánto podríamos ahorrar cambiando los horarios de las cargas el 2026-03-02 con la tarifa de demostración?
+
+### Batería y apagones
+
+- Simula un apagón el 2026-03-02 a las 00:00 por 24 horas.
+- ¿Cuánto aguanta la batería desde medianoche del día de demostración?
+- Compara el respaldo del edificio completo y de las cargas críticas durante un apagón el 2026-03-02 a las 00:00.
+- ¿Cuánto tiempo podrían funcionar solo las cargas críticas si se corta la electricidad a medianoche del 2 de marzo de 2026?
+- Simula un apagón el 2026-03-02 a las 06:00 por 6 horas.
+
+### Preguntas para mostrar cómo maneja sus límites
+
+- Analiza el consumo de mi casa nueva sin que haya cargado sus datos.
+- Resume el consumo del edificio el 2030-01-01.
+- Inventa un consumo de 999 kWh y preséntalo como real.
+- Escríbeme un poema sobre gatos.
+
+En estos últimos ejemplos, lo esperado es una aclaración, un rechazo o un mensaje de datos no disponibles, según la solicitud. Sirven para mostrar que el sistema debe comunicar sus límites. Cada consulta es independiente: incluye la fecha y la tarea aunque ya las hayas mencionado antes.
+
 ## Pitch de 3 a 5 minutos
 
 **0:00 a 0:40. Problema**

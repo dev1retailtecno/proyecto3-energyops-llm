@@ -58,3 +58,5 @@ Esta carpeta es la entrega local de la feria. No contiene el informe del viernes
 Repositorio privado: https://github.com/dev1retailtecno/proyecto3-energyops-llm
 
 Video de respaldo: `output/demo/Demo_EnergyOps.mp4` (grabación de uso real, sin narración). El repositorio es privado: otorga acceso al catedrático antes de entregarlo.
+
+Mejora visual de la feria: póster con gráfica comparativa y pipeline horizontal, indicadores de resultados, gráfica por circuito, copia de respuesta y descarga JSON. El video conserva la interfaz inicial y demuestra el mismo flujo funcional.

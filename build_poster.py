@@ -1,4 +1,4 @@
-"""Scientific poster PDF and screen HTML from measured results."""
+"""Scientific poster generated from the recorded evaluation and demo evidence."""
 import json
 from pathlib import Path
 from reportlab.pdfgen import canvas
@@ -10,56 +10,89 @@ from reportlab.lib.styles import ParagraphStyle
 import pymupdf
 
 ROOT=Path(__file__).resolve().parent
+
 def main():
     s=json.loads((ROOT/'evaluation/results.json').read_text(encoding='utf-8'))['summary']
     local=json.loads((ROOT/'evaluation/results_local.json').read_text(encoding='utf-8'))['summary']
+    examples=json.loads((ROOT/'evaluation/examples.json').read_text(encoding='utf-8'))
+    outage=next(e['data'] for e in examples if e['tool']=='simulate_outage')
     out=ROOT/'output/pdf';out.mkdir(parents=True,exist_ok=True)
-    for n,file in [('Regular','segoeui.ttf'),('Bold','segoeuib.ttf')]:pdfmetrics.registerFont(TTFont(n,str(Path('C:/Windows/Fonts')/file)))
-    W,H=1440,960
+    for n,file in [('Regular','segoeui.ttf'),('Bold','segoeuib.ttf')]:
+        pdfmetrics.registerFont(TTFont(n,str(Path('C:/Windows/Fonts')/file)))
+    W,H=1440,1000
     c=canvas.Canvas(str(out/'Poster_EnergyOps.pdf'),pagesize=(W,H))
-    c.setTitle('EnergyOps - Póster científico - Proyecto 3 Deep Learning')
-    c.setFillColor(HexColor('#0b1422'));c.rect(0,0,W,H,fill=1,stroke=0)
-    def txt(text,x,y,size=15,color='#dce8f3',bold=False,width=410):
-        style=ParagraphStyle('p',fontName='Bold' if bold else 'Regular',fontSize=size,leading=size*1.4,textColor=HexColor(color))
-        p=Paragraph(text,style);_,h=p.wrap(width,800);p.drawOn(c,x,H-y-h);return h
-    txt('UVG / CC3092 DEEP LEARNING Y SISTEMAS INTELIGENTES',48,28,12,'#6ce4c2',True,1200)
-    txt('EnergyOps',48,62,58,'#ffffff',True,1200)
-    txt('Lenguaje natural para analizar consumo, ahorro y respaldo energético',50,145,25,'#c7d9eb',False,1300)
-    txt('Ian Cumes · Feria científica · 2 de noviembre de 2026',50,188,14,'#8daac3',False,1300)
-    c.setStrokeColor(HexColor('#355065'));c.line(48,H-228,W-48,H-228)
-    xs=[50,515,980];cw=410
-    def heading(t,col,y):return txt(t,xs[col],y,21,'#6ce4c2',True,cw)
-    heading('01  Problema y usuario',0,253)
-    txt('Un administrador de edificios necesita identificar gastos inusuales y evaluar decisiones operativas. Leer series de medidores y ejecutar cálculos manuales exige tiempo y conocimientos técnicos.',xs[0],296,width=cw)
-    txt('<b>Propuesta:</b> preguntar en español y recibir un resultado trazable. El LLM selecciona una herramienta. El motor energético calcula las cifras.',xs[0],423,width=cw)
-    heading('02  Datos y método',0,535)
-    txt('<b>32,832 lecturas sintéticas</b> reproducibles, semilla 1337. Ocho semanas de historia y un día objetivo. Cinco circuitos de consumo y un medidor solar, cada 15 minutos. SQLite conserva fechas UTC y análisis en hora de Guatemala.',xs[0],580,width=cw)
-    txt('<b>Anomalías:</b> mediana histórica y MAD por horario y tipo de día.<br/><b>Horarios:</b> búsqueda de combinaciones en intervalos de 15 min, con límites de carga.<br/><b>Apagón:</b> balance batería + solar, reserva y eficiencias.',xs[0],724,width=cw)
-    heading('03  Pipeline completo',1,253)
-    steps=[('1  Pregunta del usuario','Web local en español. Una tarea por consulta.'),('2  Claude Haiku 4.5','Tokenización del proveedor. Prompt + esquemas. Selecciona herramienta y argumentos JSON.'),('3  Validación y MCP','JSON Schema valida parámetros. JSON-RPC 2.0 / stdio invoca el servidor local.'),('4  Datos y cálculo','SQLite entrega lecturas. Algoritmos calculan consumo, incidentes, horarios o autonomía.'),('5  Resultado auditable','Texto determinista y JSON visibles. No hay una segunda generación de cifras por el LLM.')]
-    y=301
-    for title,body in steps:
-        txt(title,xs[1],y,17,'#ffffff',True,cw);txt(body,xs[1],y+29,14,width=cw)
-        if title != steps[-1][0]:
-            c.setStrokeColor(HexColor('#6ce4c2')); c.setLineWidth(1.8)
-            ax=xs[1]+200; ay=H-y-86
-            c.line(ax,ay,ax,ay-12);c.line(ax,ay-12,ax-4,ay-7);c.line(ax,ay-12,ax+4,ay-7)
-        y+=104
-    txt('<b>Adaptación:</b> prompting + herramientas, sin fine-tuning ni RAG. Qwen3 0.6B Q8_0 funciona como respaldo local de clasificación, con extracción de argumentos por reglas.',xs[1],830,13,'#a9c0d3',False,cw)
-    heading('04  Resultados medidos',2,253)
-    rows=[('Sistema','Exactitud','F1 macro'),('Palabras clave',f"{s['baseline_accuracy']:.1%}",f"{s['baseline_macro_f1']:.3f}"),('Qwen3 local',f"{local['route_accuracy']:.1%}",f"{local['macro_f1']:.3f}"),('Claude + MCP',f"{s['route_accuracy']:.1%}",f"{s['macro_f1']:.3f}")]
-    y=302
-    for i,row in enumerate(rows):
-        for xx,value in zip([xs[2],xs[2]+208,xs[2]+325],row):txt(value,xx,y,14,'#6ce4c2' if i==3 else '#dce8f3',i in [0,3],200)
-        y+=40
-    txt(f"<b>{s['n']} casos</b>, 5 por cada una de 6 intenciones. Referencias definidas antes de la prueba. Exactitud de argumentos: <b>{s['argument_accuracy']:.1%}</b>.<br/>Ejecuciones MCP sin error: <b>{s['mcp_successes']}/{s['mcp_attempts']}</b>.",xs[2],480,15,width=cw)
-    txt(f"Latencia media observada: <b>{s['mean_e2e_latency_s']:.2f} s</b>.<br/>Tokens Claude en evaluación: <b>{s['input_tokens']+s['output_tokens']:,}</b>.<br/>Costo API estimado por consulta: <b>US${s['estimated_cost_usd']/s['n']:.4f}</b>.",xs[2],603,15,width=cw)
-    heading('05  Alcance y limitaciones',2,720)
-    txt('Muestra pequeña y sintética, sin validación humana independiente. Exactitud de herramienta no equivale a calidad total. No se midió una tasa general de alucinación. Las tarifas son ficticias y los resultados no certifican una instalación real.',xs[2],765,14,width=cw)
-    txt('Código reutilizado: energyops-mcp (MIT). Modelos: Claude Haiku 4.5 / Qwen3-0.6B (Apache 2.0). Fuentes: modelcontextprotocol.io · platform.claude.com/docs · huggingface.co/Qwen/Qwen3-0.6B-GGUF',50,924,10,'#89a4bb',False,1340)
+    c.setTitle('EnergyOps - Poster científico - Proyecto 3 Deep Learning')
+    ink='#142e3b';muted='#526b78';teal='#087f70';light='#e9f5f1';navy='#0b2333'
+    def rect(x,y,w,h,color,r=0):
+        c.setFillColor(HexColor(color))
+        if r:c.roundRect(x,H-y-h,w,h,r,fill=1,stroke=0)
+        else:c.rect(x,H-y-h,w,h,fill=1,stroke=0)
+    def txt(t,x,y,size=15,color=ink,bold=False,width=400):
+        st=ParagraphStyle('p',fontName='Bold' if bold else 'Regular',fontSize=size,leading=size*1.35,textColor=HexColor(color))
+        p=Paragraph(t,st);_,h=p.wrap(width,1000);p.drawOn(c,x,H-y-h);return h
+    def line(x,y,x2,y2,color='#d3e0e3'):
+        c.setStrokeColor(HexColor(color));c.setLineWidth(1);c.line(x,H-y,x2,H-y2)
+    def section(n,title,x,y,width=400):
+        txt(n,x,y,12,teal,True,30);txt(title,x+34,y-4,22,ink,True,width-34)
+    rect(0,0,W,H,'#f8fbfa')
+    rect(0,0,W,202,navy)
+    rect(0,0,12,202,'#46dfb7')
+    txt('UVG  /  CC3092 DEEP LEARNING Y SISTEMAS INTELIGENTES',48,23,11,'#73e5c5',True,1000)
+    txt('EnergyOps',46,47,61,'#ffffff',True,950)
+    txt('Análisis energético con lenguaje natural y herramientas verificables',50,132,22,'#d4e8ec',False,1040)
+    txt('Ian Cumes  /  Feria cientifica  /  2 de noviembre de 2026',50,173,12,'#91b7c2',False,1000)
+    txt(f"{round(s['route_accuracy']*s['n'])}/{s['n']}",1136,42,48,'#73e5c5',True,270)
+    txt('selecciones correctas de Claude<br/>en el conjunto de evaluación',1140,112,13,'#d4e8ec',False,250)
+    # Upper row: the problem, comparative evidence and a concrete decisión.
+    section('01','Problema y propuesta',48,237,375)
+    txt('Un administrador necesita entender su consumo, investigar picos y evaluar el respaldo de un edificio.',48,280,17,ink,False,360)
+    txt('EnergyOps convierte una pregunta en una operación trazable: el LLM interpreta y el motor calcula.',48,373,17,ink,True,360)
+    txt('Datos de demostración',48,467,12,teal,True,360)
+    txt('32,832',48,490,37,ink,True,360)
+    txt('lecturas sintéticas / 6 medidores / cada 15 min<br/>8 semanas de historia + un día objetivo<br/>SQLite / semilla 1337 / hora de Guatemala',48,544,13,muted,False,370)
+    line(438,240,438,599)
+    section('02','Evaluación comparativa',472,237,470)
+    txt('Exactitud al seleccionar la herramienta (%)',472,279,14,muted,False,460)
+    bars=[('Palabras clave',s['baseline_accuracy'],s['baseline_macro_f1'],'#9aaeb8'),('Qwen3 local',local['route_accuracy'],local['macro_f1'],'#44ad9f'),('Claude + MCP',s['route_accuracy'],s['macro_f1'],teal)]
+    y=319
+    for label,value,f1,color in bars:
+        txt(label,472,y,15,ink,True,260)
+        txt(f'{value:.1%}',826,y-2,18,color,True,110)
+        rect(472,y+29,450,15,'#e1e9ea',4);rect(472,y+29,450*value,15,color,4)
+        txt(f'F1 macro: {f1:.3f}',472,y+49,11,muted,False,450)
+        y+=81
+    txt('30 casos sintéticos, 5 por cada una de 6 intenciones.<br/>Claude: argumentos evaluados 100%; MCP sin error 25/25.<br/>Qwen3 clasifica y extrae argumentos con reglas; Claude usa tool calling.',472,564,12,muted,False,470)
+    rect(978,236,414,367,light,14)
+    txt('03   UNA DECISIÓN CONCRETA',1002,258,12,teal,True,365)
+    txt('¿Qué mantengo encendido<br/>durante un apagón?',1002,294,23,ink,True,365)
+    txt(f"{outage['full_building']['autonomy_minutes']} min",1002,374,34,ink,True,160)
+    txt(f"{outage['critical_only']['autonomy_minutes']} min",1190,374,34,teal,True,190)
+    txt('edificio completo',1002,423,13,muted,False,175)
+    txt('solo cargas críticas',1190,423,13,muted,False,180)
+    line(1002,458,1368,458,'#bddbd3')
+    txt('El edificio supera la potencia disponible desde el primer intervalo. Priorizar cargas críticas permite 3 horas de respaldo continuo.',1002,478,15,ink,False,365)
+    txt('Escenario simulado: 2026-03-02, 00:00, horizonte 24 h.',1002,566,10,muted,False,365)
+    # Architecture diagram as a single horizontal reading path.
+    section('04','Pipeline: de la pregunta al resultado',48,647,1200)
+    steps=[('01','Pregunta','Web en español.<br/>Una tarea por consulta.'),('02','LLM','Claude selecciona una<br/>herramienta y argumentos.'),('03','Validación + MCP','JSON Schema.<br/>JSON-RPC 2.0 por stdio.'),('04','Datos + algoritmos','SQLite, consumo, MAD,<br/>horarios y batería.'),('05','Salida verificable','Plantillas con cifras<br/>y JSON de la herramienta.')]
+    for i,(num,title,body) in enumerate(steps):
+        x=48+i*273
+        rect(x,691,250,109,'#ffffff',8)
+        rect(x,691,250,3,teal)
+        txt(num,x+14,707,11,teal,True,28);txt(title,x+43,704,17,ink,True,200)
+        txt(body,x+14,742,13,muted,False,224)
+        if i<4:
+            line(x+255,744,x+268,744,teal);line(x+268,744,x+264,740,teal);line(x+268,744,x+264,748,teal)
+    # Lower row: method, operational measures and limitations.
+    section('05','Método y operación',48,837,670)
+    txt('Prompting + herramientas, sin fine-tuning ni RAG. Anomalías con mediana y MAD; horarios por búsqueda a 15 min; batería con reserva, eficiencias y límites de potencia.',48,876,13,muted,False,650)
+    txt(f"<b>{s['mean_e2e_latency_s']:.2f} s</b> LLM + ejecución MCP*     <b>US${s['estimated_cost_usd']/s['n']:.4f}</b> API por consulta estimada",48,934,13,teal,False,660)
+    section('06','Alcance de la evidencia',750,837,642)
+    txt('Muestra pequeña y sintética, sin validación humana independiente. Acertar la herramienta no demuestra calidad universal. Tarifas ficticias; posibles falsas alertas. No se midio una tasa general de alucinación.',750,876,13,muted,False,642)
+    txt('*Excluye conexión inicial, descubrimiento y renderizado. Fuentes: modelcontextprotocol.io / platform.claude.com/docs / huggingface.co/Qwen/Qwen3-0.6B-GGUF. Motor reutilizado: energyops-mcp (MIT).',48,976,8,muted,False,1344)
     c.save()
-    d=pymupdf.open(out/'Poster_EnergyOps.pdf');p=d[0];pix=p.get_pixmap(matrix=pymupdf.Matrix(1.2,1.2));pix.save(out/'Poster_EnergyOps.png')
-    # Screen poster uses the same verified PDF, with browser-native zoom and printing.
-    (ROOT/'poster.html').write_text('''<!doctype html><html lang="es"><meta charset="utf-8"><title>EnergyOps · Póster científico</title><style>body{margin:0;background:#0b1422;color:white;font:16px Segoe UI}header{padding:12px 25px}a{color:#6ce4c2;margin-right:30px}iframe{width:100%;height:calc(100vh - 50px);border:0}</style><header><a href="/">Abrir demostración</a><a href="/poster.pdf">Descargar / imprimir póster PDF</a>Feria científica · UVG · Deep Learning</header><iframe title="Póster científico EnergyOps" src="/poster.pdf#view=FitH"></iframe></html>''',encoding='utf-8')
-    print('Poster PDF y PNG listos.')
+    with pymupdf.open(out/'Poster_EnergyOps.pdf') as doc:
+        doc[0].get_pixmap(matrix=pymupdf.Matrix(1.2,1.2)).save(out/'Poster_EnergyOps.png')
+    (ROOT/'poster.html').write_text("""<!doctype html><html lang="es"><meta charset="utf-8"><title>EnergyOps · Poster científico</title><style>body{margin:0;background:#0b2333;color:white;font:16px Segoe UI}header{padding:12px 25px}a{color:#73e5c5;margin-right:30px}iframe{width:100%;height:calc(100vh - 50px);border:0}</style><header><a href="/">Abrir demostración</a><a href="/poster.pdf">Descargar / imprimir poster PDF</a>Feria cientifica · UVG · Deep Learning</header><iframe title="Poster científico EnergyOps" src="/poster.pdf#view=FitH"></iframe></html>""",encoding='utf-8')
+    print('Poster actualizado: PDF y PNG.')
 if __name__=='__main__':main()

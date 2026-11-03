@@ -138,6 +138,12 @@ Una forma breve de responder “¿por qué este proyecto cumple?” es: “Tenem
 4. Abre el póster PDF de `output/pdf/Poster_EnergyOps.pdf` en otra ventana. Es una sola página horizontal, útil en pantalla o para imprimir conservando proporciones.
 5. La clave de Claude está en `.env.local`, excluida de Git. No compartas ese archivo ni la carpeta completa sin filtrar. No hace falta cambiar el proyecto de Redes: esta entrega es independiente y reutiliza su motor MCP bajo MIT.
 
+## Mejoras rápidas para usar durante la feria
+
+El póster actualizado destaca la comparación de modelos con barras, muestra el pipeline horizontal y usa la simulación de batería como ejemplo principal. Conserva las métricas de la evaluación original.
+
+En la aplicación, las cifras principales aparecen en indicadores grandes. Al consultar consumo también se muestra la energía por circuito, con la generación solar diferenciada en otro color. Puedes usar **Copiar respuesta** o **Descargar JSON** para conservar el resultado y sus parámetros. **Ctrl + Enter** ejecuta una consulta desde el campo de texto. El mensaje de espera identifica el modelo seleccionado.
+
 ## Pitch de 3 a 5 minutos
 
 **0:00 a 0:40. Problema**

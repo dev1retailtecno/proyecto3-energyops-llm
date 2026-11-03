@@ -6,7 +6,7 @@ La aplicación actual permite consultar **datos simulados del 5 de enero al 2 de
 
 Si Claude falla, intenta Qwen3; si tampoco está disponible, puede continuar con reglas básicas, siempre indicando ese modo. Cuando faltan datos o algún parámetro no es válido, conserva la pregunta y ofrece sugerencias. En “Consultas recientes” puedes abrir resultados anteriores, identificados como guardados. La aplicación ya no depende de que Qwen3 esté disponible para abrirse.
 
-**El pitch, el póster, las preguntas de ejemplo y las métricas que siguen describen el escenario original del 2 de marzo.** Se mantienen como referencia de la feria. El conjunto original tiene 32,832 lecturas; no confundas ese benchmark con la cobertura ampliada de la aplicación. Los datos de hoy también son sintéticos, de día completo, no lecturas en tiempo real.
+**El pitch, las preguntas de ejemplo y las métricas que siguen describen el escenario original del 2 de marzo. El póster actualizado incorpora la cobertura ampliada y distingue esas métricas históricas.** Se mantienen como referencia de la feria. El conjunto original tiene 32,832 lecturas; no confundas ese benchmark con la cobertura ampliada de la aplicación. Los datos de hoy también son sintéticos, de día completo, no lecturas en tiempo real.
 
 
 

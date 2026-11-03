@@ -10,7 +10,7 @@ Ante fechas sin cobertura, parámetros inválidos o fallas de servicio se conser
 
 `INICIAR.cmd` abre la aplicación aunque no esté disponible el modelo local. Claude y los análisis directos pueden usarse por separado. Las dependencias básicas de Python siguen siendo necesarias.
 
-**Evaluación original:** `runtime.sqlite3`, el benchmark, el póster y el video conservan el escenario del 2 de marzo y sus 32,832 lecturas. Las lecturas originales se preservan sin cambios al extender el generador. Las métricas históricas no representan una evaluación de los modos de recuperación ni de todo el intervalo ampliado.
+**Evaluación original:** `runtime.sqlite3`, el benchmark y el video conservan el escenario del 2 de marzo y sus 32,832 lecturas. El póster actualizado presenta la cobertura ampliada y diferencia las métricas históricas. Las lecturas originales se preservan sin cambios al extender el generador. Las métricas históricas no representan una evaluación de los modos de recuperación ni de todo el intervalo ampliado.
 
 
 

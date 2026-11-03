@@ -1,0 +1,11 @@
+.env*
+!.env.example
+*.sqlite3
+*.sqlite3-*
+__pycache__/
+.venv/
+tmp/
+local_runtime/
+*.log
+.playwright-cli/
+.pytest_cache/

@@ -1,5 +1,19 @@
 # EnergyOps · Proyecto 3 Deep Learning
 
+## Versión actual de la aplicación
+
+La aplicación usa `dashboard.sqlite3`, generada automáticamente con **173,952 lecturas sintéticas**, seis medidores y 302 días, del **5 de enero al 2 de noviembre de 2026**. Son días completos simulados, no mediciones actuales de un edificio real. `ENERGYOPS_TODAY` permite configurar la fecha de corte de la simulación (predeterminada: 2026-11-02).
+
+La interfaz incorpora calendario, vistas de día/7 días/mes, tendencia de hasta 30 días, indicadores, análisis directos y consultas recientes en el navegador. Comprende fechas relativas como hoy y ayer. Los botones de análisis directo calculan por MCP sin usar un LLM. El modo automático intenta Claude, después Qwen3 local y, ante fallas de ambos, reglas básicas para las intenciones reconocidas. Cada respuesta identifica su modo. No se presenta un cálculo por reglas ni un resultado guardado como inferencia LLM nueva.
+
+Ante fechas sin cobertura, parámetros inválidos o fallas de servicio se conserva la pregunta y se ofrecen alternativas. El cliente MCP intenta restablecer una conexión interrumpida una vez. Si el motor falla y existe un resultado en memoria con exactamente la misma herramienta y argumentos, se muestra como resultado previo, sin sustituir fechas. La web también conserva hasta seis resultados en este navegador. Las operaciones tienen límites de espera: no se garantiza disponibilidad absoluta.
+
+`INICIAR.cmd` abre la aplicación aunque no esté disponible el modelo local. Claude y los análisis directos pueden usarse por separado. Las dependencias básicas de Python siguen siendo necesarias.
+
+**Evaluación original:** `runtime.sqlite3`, el benchmark, el póster y el video conservan el escenario del 2 de marzo y sus 32,832 lecturas. Las lecturas originales se preservan sin cambios al extender el generador. Las métricas históricas no representan una evaluación de los modos de recuperación ni de todo el intervalo ampliado.
+
+
+
 Aplicación para la feria del 2 de noviembre de 2026. Reutiliza el motor y protocolo de [energyops-mcp](https://github.com/iancumes/energyops-mcp) (MIT) en una copia independiente. No requiere modificar Redes ni conectar sus servidores de archivos, Git o inventario.
 
 ## Ejecutar

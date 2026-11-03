@@ -1,5 +1,15 @@
 # EnergyOps: guía para presentar y entender el proyecto
 
+## Actualización de la aplicación: más fechas y continuidad
+
+La aplicación actual permite consultar **datos simulados del 5 de enero al 2 de noviembre de 2026**: 173,952 lecturas. Usa el calendario y las vistas de día, 7 días o mes. Puedes preguntar “Resume el consumo de hoy”, “¿Cuánto consumimos esta semana?” o “Resume el consumo de octubre”. Los análisis rápidos funcionan sin modelos y se identifican como consulta directa.
+
+Si Claude falla, intenta Qwen3; si tampoco está disponible, puede continuar con reglas básicas, siempre indicando ese modo. Cuando faltan datos o algún parámetro no es válido, conserva la pregunta y ofrece sugerencias. En “Consultas recientes” puedes abrir resultados anteriores, identificados como guardados. La aplicación ya no depende de que Qwen3 esté disponible para abrirse.
+
+**El pitch, el póster, las preguntas de ejemplo y las métricas que siguen describen el escenario original del 2 de marzo.** Se mantienen como referencia de la feria. El conjunto original tiene 32,832 lecturas; no confundas ese benchmark con la cobertura ampliada de la aplicación. Los datos de hoy también son sintéticos, de día completo, no lecturas en tiempo real.
+
+
+
 ## Qué es el proyecto
 
 **EnergyOps es una aplicación web que permite hacer análisis energético de un edificio mediante preguntas en español.** Está pensada para un administrador que necesita entender cuánto se consume, revisar comportamientos inusuales, decidir cuándo operar ciertas cargas o estimar cuánto tiempo puede funcionar con batería durante un apagón.
@@ -273,7 +283,7 @@ Si prefieres mostrar **Ahorro**, el resultado de la tarifa ficticia es costo pro
 - En **Respaldo para la feria**, abre un resultado guardado. El encabezado lo identifica como respaldo: no lo presentes como inferencia en vivo.
 - Si cierras todo, ejecuta `INICIAR.cmd`. Arranca el servidor local oculto y abre la aplicación. No depende de Docker, PostgreSQL ni los otros proyectos de Redes.
 - Si el puerto está ocupado por esta misma aplicación, el iniciador la reutiliza.
-- No uses “hoy” como fecha de datos. El día disponible de demostración es **2026-03-02**. Fechas sin lecturas pueden producir errores y no deben fabricar resultados.
+- En la versión ampliada puedes usar “hoy”, “ayer” y el calendario hasta el **2026-11-02**. Para reproducir las métricas y cifras del pitch original, usa **2026-03-02**. Las fechas sin cobertura producen orientación para continuar, sin fabricar lecturas.
 
 ## Qué está listo para hoy
 

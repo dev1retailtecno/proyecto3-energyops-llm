@@ -10,7 +10,7 @@ from __future__ import annotations
 import csv
 import math
 import sqlite3
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -103,6 +103,7 @@ def seed_demo_building(
     name: str = "Edificio Demo UVG",
     max_demand_kw: float = 45.0,
     seed: int | None = None,
+    through_date: date | None = None,
 ) -> dict[str, Any]:
     """Create the demo building/meters/loads/battery and load the synthetic dataset.
 
@@ -142,7 +143,7 @@ def seed_demo_building(
         (f"{building_id}:battery-1", building_id, 10.0, 1.0, 0.2, 0.95, 0.95, 5.0, 5.0),
     )
 
-    readings = generate_dataset(seed=actual_seed)
+    readings = generate_dataset(seed=actual_seed, end_day=through_date)
     before = conn.total_changes
     conn.executemany(
         "INSERT OR IGNORE INTO readings (meter_id, timestamp_utc, energy_kwh, source) VALUES (?,?,?,?)",

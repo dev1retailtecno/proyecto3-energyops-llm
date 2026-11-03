@@ -97,6 +97,7 @@ def generate_dataset(
     seed: int = DEFAULT_SEED,
     target_day: date = DEFAULT_TARGET_DAY,
     history_weeks: int = DEFAULT_HISTORY_WEEKS,
+    end_day: date | None = None,
 ) -> list[Reading]:
     """Generate `history_weeks` of history plus `target_day`, at 15-min resolution.
 
@@ -105,7 +106,9 @@ def generate_dataset(
     """
     rng = random.Random(seed)
     first_day = target_day - timedelta(weeks=history_weeks)
-    total_days = history_weeks * 7 + 1
+    if end_day is not None and end_day < target_day:
+        raise ValueError('end_day cannot precede target_day')
+    total_days = ((end_day or target_day) - first_day).days + 1
     readings: list[Reading] = []
 
     for day_offset in range(total_days):

@@ -74,3 +74,10 @@ Repositorio privado: https://github.com/dev1retailtecno/proyecto3-energyops-llm
 Video de respaldo: `output/demo/Demo_EnergyOps.mp4` (grabación de uso real, sin narración). El repositorio es privado: otorga acceso al catedrático antes de entregarlo.
 
 Mejora visual de la feria: póster con gráfica comparativa y pipeline horizontal, indicadores de resultados, gráfica por circuito, copia de respuesta y descarga JSON. El video conserva la interfaz inicial y demuestra el mismo flujo funcional.
+
+
+## Interpretación de consultas informales
+
+Se agregó normalización conservadora de abreviaciones y errores frecuentes, fechas DD/MM/YYYY, horas am/pm, duraciones en minutos o palabras y períodos de N días. El prompt incluye ejemplos y contraste entre intenciones; un verificador revisa contradicciones claras de intención y campos explícitos. Los ajustes se registran en `usage.interpretation_repairs` del JSON descargable y se avisan en la respuesta. No se cambiaron los pesos de los modelos.
+
+Pruebas antes/después guardadas en `evaluation/robustness_before.json` y `evaluation/robustness_after.json`. Para medir de nuevo usa `python evaluate_robustness.py nueva_prueba` con una etiqueta sin usar; el script evita sobrescribir evidencia. **El código actual siempre prueba la versión actual**: para reproducir la versión anterior se necesita el commit previo a esta mejora. Los archivos guardados corresponden a las dos versiones efectivamente medidas. Sobre 24 consultas sintéticas ruidosas, tarea y campos críticos correctos: Claude 21/24 a 24/24; Qwen3 local 11/24 a 24/24. Esto mide el pipeline con normalización y validación, no solo el modelo. Son sondas de desarrollo sin revisión humana independiente ni estimación imparcial de generalización. Las métricas históricas del póster y del benchmark original se mantienen separadas.

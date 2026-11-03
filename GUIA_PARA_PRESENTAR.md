@@ -154,6 +154,12 @@ El póster actualizado destaca la comparación de modelos con barras, muestra el
 
 En la aplicación, las cifras principales aparecen en indicadores grandes. Al consultar consumo también se muestra la energía por circuito, con la generación solar diferenciada en otro color. Puedes usar **Copiar respuesta** o **Descargar JSON** para conservar el resultado y sus parámetros. **Ctrl + Enter** ejecuta una consulta desde el campo de texto. El mensaje de espera identifica el modelo seleccionado.
 
+## Consultas informales y revisión de interpretación
+
+La aplicación ahora tolera algunas abreviaciones y errores comunes, fechas día/mes/año, horas am/pm y duraciones en minutos o palabras. Ejemplos para probar: “q tanto gastams d luz oy”, “corte hoy a las 6pm durante 2h” y “anomalias en bomba y luces hoy”. Cuando corrige una contradicción o un parámetro explícito, lo indica y registra el ajuste en el JSON descargable.
+
+La mejora utiliza prompting con ejemplos, normalización y validación semántica. No reentrenamos los pesos. En 24 consultas sintéticas de desarrollo, la tarea y campos críticos pasaron de 21/24 a 24/24 con Claude y de 11/24 a 24/24 con Qwen3. Es un resultado del pipeline sobre esa muestra, no una garantía para cualquier prompt ni una evaluación humana independiente.
+
 ## Preguntas que puedes hacerle al chat
 
 Puedes copiar estas preguntas directamente. Usan el edificio de demostración y la fecha con datos preparados. Haz una pregunta a la vez.

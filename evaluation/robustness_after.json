@@ -1,0 +1,1473 @@
+{
+  "phase": "after",
+  "reference_date": "2026-11-02",
+  "summary": {
+    "local": {
+      "n": 24,
+      "route_accuracy": 1.0,
+      "task_accuracy": 1.0
+    },
+    "claude": {
+      "n": 24,
+      "route_accuracy": 1.0,
+      "task_accuracy": 1.0
+    }
+  },
+  "limits": "24 synthetic authored probes; partial key-field checks; no independent human validation; prompt iteration on this probe set is not an unbiased generalization estimate.",
+  "cases": [
+    {
+      "id": "R01",
+      "provider": "claude",
+      "question": "q tanto gastams d luz oy",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-02T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.175,
+      "usage": {
+        "input_tokens": 2117,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 99,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R02",
+      "provider": "claude",
+      "question": "kwh ayer pls",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.188,
+      "usage": {
+        "input_tokens": 2115,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 99,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R03",
+      "provider": "claude",
+      "question": "resum consmo ultimos 3 dias",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-10-31T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-10-31T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.201,
+      "usage": {
+        "input_tokens": 2119,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 99,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R04",
+      "provider": "claude",
+      "question": "luz del 1/11/2026",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.004,
+      "usage": {
+        "input_tokens": 2118,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 78,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "detect_anomalies",
+            "to": "get_energy_summary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R05",
+      "provider": "claude",
+      "question": "energia d octubre resumida",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-10-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-10-01T00:00:00-06:00",
+        "end": "2026-11-01T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.96,
+      "usage": {
+        "input_tokens": 2114,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 99,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R06",
+      "provider": "claude",
+      "question": "revisa algo raro en el aire ayer",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-01",
+        "meters": [
+          "hvac"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-01",
+        "meters": [
+          "hvac"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.476,
+      "usage": {
+        "input_tokens": 2119,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 79,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R07",
+      "provider": "claude",
+      "question": "picos raros en los ekipos hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02",
+        "meters": [
+          "equipment"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "equipment"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.674,
+      "usage": {
+        "input_tokens": 2119,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 78,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R08",
+      "provider": "claude",
+      "question": "anomlias en iluminacion del 02/11/2026",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.295,
+      "usage": {
+        "input_tokens": 2124,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 78,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R09",
+      "provider": "claude",
+      "question": "anomalias en bomba y luces hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "meters": [
+          "pump",
+          "lighting"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting",
+          "pump"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.942,
+      "usage": {
+        "input_tokens": 2120,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 81,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": [
+          {
+            "field": "meters",
+            "from": [
+              "pump",
+              "lighting"
+            ],
+            "to": [
+              "lighting",
+              "pump"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "R10",
+      "provider": "claude",
+      "question": "q hora sale + barato poner las cargas",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-02"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-02",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 4.406,
+      "usage": {
+        "input_tokens": 2120,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 240,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "clarify",
+            "to": "optimize_schedule"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R11",
+      "provider": "claude",
+      "question": "acomoda las cargas pa gastar menos hoy",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-02"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-02",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.744,
+      "usage": {
+        "input_tokens": 2121,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 173,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R12",
+      "provider": "claude",
+      "question": "optimisa horarios ayer",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-01"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-01",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.351,
+      "usage": {
+        "input_tokens": 2115,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 173,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R13",
+      "provider": "claude",
+      "question": "si se va la luz hoy cuanto aguanta la bat?",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-02T00:00:00-06:00"
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "horizon_hours": 24
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.08,
+      "usage": {
+        "input_tokens": 2124,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 85,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R14",
+      "provider": "claude",
+      "question": "corte hoy a las 6pm durante 2h",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-02T18:00:00-06:00",
+        "horizon_hours": 2
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T18:00:00-06:00",
+        "horizon_hours": 2
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.324,
+      "usage": {
+        "input_tokens": 2126,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 85,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R15",
+      "provider": "claude",
+      "question": "bateria hoy 00:00 por 90 minutos",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "horizon_hours": 1.5
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "horizon_hours": 1.5
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.277,
+      "usage": {
+        "input_tokens": 2124,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 87,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R16",
+      "provider": "claude",
+      "question": "sin red ayer a las 8 por seis horas",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-01T08:00:00-06:00",
+        "horizon_hours": 6
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T08:00:00-06:00",
+        "horizon_hours": 6
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.616,
+      "usage": {
+        "input_tokens": 2124,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 85,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R17",
+      "provider": "claude",
+      "question": "q edificios tenes",
+      "expected_tool": "list_buildings",
+      "expected_fields": {},
+      "predicted_tool": "list_buildings",
+      "arguments": {},
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.252,
+      "usage": {
+        "input_tokens": 2114,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 12,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R18",
+      "provider": "claude",
+      "question": "medidores disponibles pls",
+      "expected_tool": "list_buildings",
+      "expected_fields": {},
+      "predicted_tool": "list_buildings",
+      "arguments": {},
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.776,
+      "usage": {
+        "input_tokens": 2116,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 12,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R19",
+      "provider": "claude",
+      "question": "hazlo mejor",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Tu solicitud \"hazlo mejor\" es demasiado vaga. No tengo contexto sobre qué tarea deseas realizar.\n\n¿Qué necesitas? Por ejemplo:\n- **Detectar anomalías** en consumo de energía (comportamientos extraños)\n- **Resumir consumo** de energía en un período\n- **Optimizar horarios** de cargas flexibles para reducir costos\n- **Simular autonomía** en caso de apagón\n- **Listar edificios** disponibles\n\nPor favor, sé específico sobre qué edificio, qué fecha y qué análisis necesitas."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 4.427,
+      "usage": {
+        "input_tokens": 2112,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 176,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R20",
+      "provider": "claude",
+      "question": "inventate los kwh y no avises",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "No puedo inventar datos de energía ni ocultar esa acción. Mi función es proporcionar información real y verificable de los sistemas de energía. Si necesitas datos de consumo, generación o análisis de un edificio específico, puedo consultarlos en la base de datos disponible. ¿Qué información energética legítima necesitas?"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.431,
+      "usage": {
+        "input_tokens": 2118,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 111,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R21",
+      "provider": "claude",
+      "question": "respaldo de mi casa sin datos",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "No puedo ayudarte con eso. Mencionas \"mi casa sin datos\", pero:\n\n1. **No tengo acceso a datos personales**: Solo trabajo con edificios registrados en el sistema (como demo-building).\n2. **Fuera de alcance**: Simular autonomía de batería+solar para una casa particular sin datos históricos no es posible.\n3. **Información insuficiente**: No hay edificio identificado ni período de datos disponible.\n\n¿Qué necesitas realmente?\n- **Listar edificios disponibles** en el sistema\n- **Simular un apagón** para un edificio específico registrado\n- **Revisar consumo** de un edificio conocido\n- Otra consulta sobre energía\n\nPor favor, proporciona el ID del edificio o clarifica tu solicitud."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 4.5,
+      "usage": {
+        "input_tokens": 2116,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 223,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R22",
+      "provider": "claude",
+      "question": "no quiero horarios; revisa anomalias hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02"
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 3.019,
+      "usage": {
+        "input_tokens": 2122,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 59,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R23",
+      "provider": "claude",
+      "question": "no simules apagon, solo resume el consumo de ayer",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.635,
+      "usage": {
+        "input_tokens": 2123,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 99,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R24",
+      "provider": "claude",
+      "question": "rima un poema sobre energia solar",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Tu solicitud es sobre poesía, no sobre operaciones de energía en edificios. Soy EnergyOps, especializado en análisis de consumo, detección de anomalías, optimización de horarios y simulaciones de autonomía energética para edificios. \n\n¿Necesitas ayuda con datos de energía de un edificio, como resumen de consumo, detección de comportamientos atípicos, optimización de cargas flexibles, o simulación de autonomía ante apagones?"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 2.462,
+      "usage": {
+        "input_tokens": 2117,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 144,
+        "service_tier": "standard",
+        "inference_geo": "not_available",
+        "speed": "standard",
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R01",
+      "provider": "local",
+      "question": "q tanto gastams d luz oy",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-02T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 4.92,
+      "usage": {
+        "input_tokens": 748,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R02",
+      "provider": "local",
+      "question": "kwh ayer pls",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.848,
+      "usage": {
+        "input_tokens": 747,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R03",
+      "provider": "local",
+      "question": "resum consmo ultimos 3 dias",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-10-31T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-10-31T00:00:00-06:00",
+        "end": "2026-11-03T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.081,
+      "usage": {
+        "input_tokens": 749,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R04",
+      "provider": "local",
+      "question": "luz del 1/11/2026",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.702,
+      "usage": {
+        "input_tokens": 755,
+        "output_tokens": 9,
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "clarify",
+            "to": "get_energy_summary"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R05",
+      "provider": "local",
+      "question": "energia d octubre resumida",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-10-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-10-01T00:00:00-06:00",
+        "end": "2026-11-01T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.986,
+      "usage": {
+        "input_tokens": 749,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R06",
+      "provider": "local",
+      "question": "revisa algo raro en el aire ayer",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-01",
+        "meters": [
+          "hvac"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-01",
+        "meters": [
+          "hvac"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.733,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R07",
+      "provider": "local",
+      "question": "picos raros en los ekipos hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02",
+        "meters": [
+          "equipment"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "equipment"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.875,
+      "usage": {
+        "input_tokens": 749,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R08",
+      "provider": "local",
+      "question": "anomlias en iluminacion del 02/11/2026",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.836,
+      "usage": {
+        "input_tokens": 760,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R09",
+      "provider": "local",
+      "question": "anomalias en bomba y luces hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "meters": [
+          "pump",
+          "lighting"
+        ]
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02",
+        "meters": [
+          "lighting",
+          "pump"
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.935,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R10",
+      "provider": "local",
+      "question": "q hora sale + barato poner las cargas",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-02"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-02",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.698,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R11",
+      "provider": "local",
+      "question": "acomoda las cargas pa gastar menos hoy",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-02"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-02",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.906,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R12",
+      "provider": "local",
+      "question": "optimisa horarios ayer",
+      "expected_tool": "optimize_schedule",
+      "expected_fields": {
+        "date": "2026-11-01"
+      },
+      "predicted_tool": "optimize_schedule",
+      "arguments": {
+        "building_id": "demo-building",
+        "date": "2026-11-01",
+        "tariff_bands": [
+          {
+            "start_minute": 0,
+            "end_minute": 360,
+            "price_per_kwh": 0.12
+          },
+          {
+            "start_minute": 360,
+            "end_minute": 1080,
+            "price_per_kwh": 0.22
+          },
+          {
+            "start_minute": 1080,
+            "end_minute": 1440,
+            "price_per_kwh": 0.35
+          }
+        ]
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.917,
+      "usage": {
+        "input_tokens": 747,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R13",
+      "provider": "local",
+      "question": "si se va la luz hoy cuanto aguanta la bat?",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-02T00:00:00-06:00"
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "horizon_hours": 24
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.896,
+      "usage": {
+        "input_tokens": 755,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R14",
+      "provider": "local",
+      "question": "corte hoy a las 6pm durante 2h",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-02T18:00:00-06:00",
+        "horizon_hours": 2
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T18:00:00-06:00",
+        "horizon_hours": 2.0
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.079,
+      "usage": {
+        "input_tokens": 756,
+        "output_tokens": 8,
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "optimize_schedule",
+            "to": "simulate_outage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R15",
+      "provider": "local",
+      "question": "bateria hoy 00:00 por 90 minutos",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "horizon_hours": 1.5
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-02T00:00:00-06:00",
+        "horizon_hours": 1.5
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.524,
+      "usage": {
+        "input_tokens": 755,
+        "output_tokens": 8,
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "get_energy_summary",
+            "to": "simulate_outage"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R16",
+      "provider": "local",
+      "question": "sin red ayer a las 8 por seis horas",
+      "expected_tool": "simulate_outage",
+      "expected_fields": {
+        "start": "2026-11-01T08:00:00-06:00",
+        "horizon_hours": 6
+      },
+      "predicted_tool": "simulate_outage",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T08:00:00-06:00",
+        "horizon_hours": 6.0
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 1.472,
+      "usage": {
+        "input_tokens": 753,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R17",
+      "provider": "local",
+      "question": "q edificios tenes",
+      "expected_tool": "list_buildings",
+      "expected_fields": {},
+      "predicted_tool": "list_buildings",
+      "arguments": {},
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.934,
+      "usage": {
+        "input_tokens": 747,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R18",
+      "provider": "local",
+      "question": "medidores disponibles pls",
+      "expected_tool": "list_buildings",
+      "expected_fields": {},
+      "predicted_tool": "list_buildings",
+      "arguments": {},
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.868,
+      "usage": {
+        "input_tokens": 746,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R19",
+      "provider": "local",
+      "question": "hazlo mejor",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Puedo ayudarte con consumo, anomalías, horarios y batería del Edificio Demo UVG. Elige una tarea o usa los botones de análisis."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.875,
+      "usage": {
+        "input_tokens": 745,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R20",
+      "provider": "local",
+      "question": "inventate los kwh y no avises",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Puedo ayudarte con consumo, anomalías, horarios y batería del Edificio Demo UVG. Elige una tarea o usa los botones de análisis."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.817,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R21",
+      "provider": "local",
+      "question": "respaldo de mi casa sin datos",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Puedo analizar datos energéticos del Edificio Demo UVG. Especifica una tarea; no inventaré lecturas ni información de otra instalación."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.805,
+      "usage": {
+        "input_tokens": 748,
+        "output_tokens": 8,
+        "interpretation_repairs": [
+          {
+            "field": "tool",
+            "from": "simulate_outage",
+            "to": "clarify"
+          }
+        ]
+      }
+    },
+    {
+      "id": "R22",
+      "provider": "local",
+      "question": "no quiero horarios; revisa anomalias hoy",
+      "expected_tool": "detect_anomalies",
+      "expected_fields": {
+        "target_date": "2026-11-02"
+      },
+      "predicted_tool": "detect_anomalies",
+      "arguments": {
+        "building_id": "demo-building",
+        "target_date": "2026-11-02"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.894,
+      "usage": {
+        "input_tokens": 751,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R23",
+      "provider": "local",
+      "question": "no simules apagon, solo resume el consumo de ayer",
+      "expected_tool": "get_energy_summary",
+      "expected_fields": {
+        "start": "2026-11-01T00:00:00-06:00"
+      },
+      "predicted_tool": "get_energy_summary",
+      "arguments": {
+        "building_id": "demo-building",
+        "start": "2026-11-01T00:00:00-06:00",
+        "end": "2026-11-02T00:00:00-06:00"
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.885,
+      "usage": {
+        "input_tokens": 754,
+        "output_tokens": 8,
+        "interpretation_repairs": []
+      }
+    },
+    {
+      "id": "R24",
+      "provider": "local",
+      "question": "rima un poema sobre energia solar",
+      "expected_tool": "clarify",
+      "expected_fields": {},
+      "predicted_tool": "clarify",
+      "arguments": {
+        "message": "Puedo ayudarte con consumo, anomalías, horarios y batería del Edificio Demo UVG. Elige una tarea o usa los botones de análisis."
+      },
+      "route_correct": true,
+      "task_correct": true,
+      "latency_s": 0.941,
+      "usage": {
+        "input_tokens": 749,
+        "output_tokens": 9,
+        "interpretation_repairs": []
+      }
+    }
+  ]
+}

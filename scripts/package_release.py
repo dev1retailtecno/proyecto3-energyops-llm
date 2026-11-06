@@ -13,6 +13,7 @@ def main():
     OUT.mkdir(parents=True,exist_ok=True)
     source=OUT/'Codigo_EnergyOps.zip'
     with zipfile.ZipFile(io.BytesIO(git('archive','--format=zip','HEAD'))) as snapshot,zipfile.ZipFile(source,'w',zipfile.ZIP_DEFLATED,compresslevel=6) as target:
+        target.writestr('EnergyOps/SOURCE_REVISION.txt',git('rev-parse','HEAD').decode().strip()+'\n')
         for item in snapshot.infolist():
             name=item.filename
             if item.is_dir():continue

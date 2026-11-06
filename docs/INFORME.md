@@ -120,7 +120,7 @@ Separamos resultados históricos y finales. Inicialmente se usaron 30 consultas 
 
 Cada caso especifica una herramienta esperada y campos críticos: edificio, límites de fecha, circuitos, inicio y duración, según corresponda. Las referencias fueron redactadas para el proyecto con asistencia automatizada, sin validación humana independiente. Su consistencia se comprueba con reglas y ejemplos verificables, pero los casos siguen siendo sintéticos y pueden reflejar sesgos del autor. No usamos respuestas de referencia generadas durante la medición por el propio modelo evaluado.
 
-El conjunto final está en evaluation/final_cases.json, congelado en el commit b71d310. Su SHA-256 es ba05930b5d0510b5d688afbe88ded5a69e612ea456351e10d4117402a55ac3ef. No se retocó el prompt para conseguir 100% en esta muestra. Las fallas permanecen en el registro. Una defensa adicional del host para solicitudes múltiples se validó después con pruebas de regresión; no se suma retrospectivamente a los aciertos del planificador medido.
+El conjunto final está en evaluation/final_cases.json, congelado en el commit b71d310. Su SHA-256 canónico, con saltos LF, es 081f84df80314f5576c7222d34b04325224ff51a5a9f4203eab5b7c5139a39fc. No se retocó el prompt para conseguir 100% en esta muestra. Las fallas permanecen en el registro. Una defensa adicional del host para solicitudes múltiples se validó después con pruebas de regresión; no se suma retrospectivamente a los aciertos del planificador medido.
 
 ## 4.2 Métricas y baselines
 

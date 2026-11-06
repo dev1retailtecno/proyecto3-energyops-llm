@@ -6,6 +6,13 @@ import app
 from evaluate import baseline
 
 
+def source_revision():
+ marker=ROOT/'SOURCE_REVISION.txt'
+ if marker.is_file():return marker.read_text(encoding='utf-8').strip()
+ try:return subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True,stderr=subprocess.DEVNULL).strip()
+ except (OSError,subprocess.CalledProcessError):return 'unversioned source copy'
+
+
 def correct(name,args,case):
  if name!=case['expected_tool']:return False
  for k,value in case['expected_fields'].items():
@@ -59,6 +66,6 @@ async def main():
   summary[p]={**metrics(subset,'predicted_tool','task_correct'),'raw':metrics(subset,'raw_tool','raw_correct'),'mean_llm_latency_s':statistics.mean(r['llm_latency_s'] for r in subset),'mean_llm_mcp_s':statistics.mean(latencies),'p95_llm_mcp_s':sorted(latencies)[math.ceil(.95*len(latencies))-1],'input_tokens':usage_in,'output_tokens':usage_out,'estimated_cost_usd':(usage_in+5*usage_out)/1e6 if p=='claude' else 0,'mcp_attempts':sum('mcp_success' in r for r in subset),'mcp_successes':sum(r.get('mcp_success',False) for r in subset),'end_to_end_task_accuracy':sum(r['task_correct'] and (r['predicted_tool']=='clarify' or r.get('mcp_success')) for r in subset)/len(subset)}
  summary['keyword_baseline']=metrics([r for r in rows if r['provider']=='claude'],'baseline_tool')
  summary['rules_baseline']=metrics([r for r in rows if r['provider']=='claude'],'rules_tool','rules_correct')
- result={'reference_date':dataset['reference_date'],'dataset_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'source_commit':subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT,text=True).strip(),'scope':'Frozen authored synthetic holdout; no independent human label validation. Raw and reviewed use the same model call. Latency excludes startup, discovery and browser. Claude concurrent=3, local sequential=1; throughput conditions differ. Wilson intervals descriptive only.','summary':summary,'cases':rows}
+ result={'reference_date':dataset['reference_date'],'dataset_sha256':hashlib.sha256(path.read_bytes()).hexdigest(),'dataset_sha256_lf':hashlib.sha256(path.read_bytes().replace(b'\r\n',b'\n')).hexdigest(),'source_commit':source_revision(),'scope':'Frozen authored synthetic holdout; no independent human label validation. Raw and reviewed use the same model call. Latency excludes startup, discovery and browser. Claude concurrent=3, local sequential=1; throughput conditions differ. Wilson intervals descriptive only.','summary':summary,'cases':rows}
  output.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8');print(json.dumps(summary,ensure_ascii=False,indent=2),flush=True)
 if __name__=='__main__':asyncio.run(main())

@@ -10243,5 +10243,7 @@
       "raw_correct": true,
       "llm_latency_s": 0.5573
     }
-  ]
+  ],
+  "dataset_sha256_lf": "081f84df80314f5576c7222d34b04325224ff51a5a9f4203eab5b7c5139a39fc",
+  "dataset_hash_note": "dataset_sha256 records original measured bytes with Windows CRLF. dataset_sha256_lf normalizes CRLF to LF and matches the Git archive. Case content is unchanged."
 }

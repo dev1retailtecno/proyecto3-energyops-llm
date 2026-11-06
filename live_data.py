@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 from energyops_mcp.energy import storage
 
 ROOT = Path(__file__).resolve().parent
-TODAY = date.fromisoformat(os.getenv('ENERGYOPS_TODAY', '2026-11-02'))
+TODAY = date.fromisoformat(os.getenv('ENERGYOPS_TODAY', datetime.now(ZoneInfo('America/Guatemala')).date().isoformat()))
 FIRST_DAY = date(2026, 1, 5)
 DB_PATH = ROOT / 'dashboard.sqlite3'
 _ready = False
@@ -46,9 +46,9 @@ def overview(selected=None, period='day'):
               SUM(CASE WHEN m.kind='generation' THEN energy_kwh ELSE 0 END) AS generation_kwh,
               COUNT(*) AS readings
             FROM readings r JOIN meters m ON m.id=r.meter_id
-            WHERE m.building_id='demo-building'
+            WHERE m.building_id='demo-building' AND date(r.timestamp_utc,'-6 hours') <= ?
             GROUP BY day ORDER BY day
-        """).fetchall()
+        """,(str(TODAY),)).fetchall()
     daily = [{**dict(r), 'consumption_kwh': round(r['consumption_kwh'], 3), 'generation_kwh': round(r['generation_kwh'], 3)} for r in rows]
     if period not in {'day','week','month'}:
         raise ValueError('Período no disponible.')

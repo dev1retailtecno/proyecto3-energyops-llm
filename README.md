@@ -1,83 +1,113 @@
-# EnergyOps · Proyecto 3 Deep Learning
+# EnergyOps · Proyecto 3 de Deep Learning
 
-## Versión actual de la aplicación
+**Ian Cumes · 23236 — Javier Valladares · 23045**
+UVG · CC3092 · Entrega: 6 de noviembre de 2026
 
-La aplicación usa `dashboard.sqlite3`, generada automáticamente con **173,952 lecturas sintéticas**, seis medidores y 302 días, del **5 de enero al 2 de noviembre de 2026**. Son días completos simulados, no mediciones actuales de un edificio real. `ENERGYOPS_TODAY` permite configurar la fecha de corte de la simulación (predeterminada: 2026-11-02).
+Aplicación web para consultar consumo, anomalías, horarios y respaldo de batería mediante preguntas en español. Claude Haiku 4.5 o Qwen3-0.6B interpretan la consulta; un servidor **MCP real por stdio** ejecuta herramientas sobre SQLite. Los números se calculan en el motor.
 
-La interfaz incorpora calendario, vistas de día/7 días/mes, tendencia de hasta 30 días, indicadores, análisis directos y consultas recientes en el navegador. Comprende fechas relativas como hoy y ayer. Los botones de análisis directo calculan por MCP sin usar un LLM. El modo automático intenta Claude, después Qwen3 local y, ante fallas de ambos, reglas básicas para las intenciones reconocidas. Cada respuesta identifica su modo. No se presenta un cálculo por reglas ni un resultado guardado como inferencia LLM nueva.
+## Entregables finales
 
-Ante fechas sin cobertura, parámetros inválidos o fallas de servicio se conserva la pregunta y se ofrecen alternativas. El cliente MCP intenta restablecer una conexión interrumpida una vez. Si el motor falla y existe un resultado en memoria con exactamente la misma herramienta y argumentos, se muestra como resultado previo, sin sustituir fechas. La web también conserva hasta seis resultados en este navegador. Las operaciones tienen límites de espera: no se garantiza disponibilidad absoluta.
+| Entregable | Archivo |
+| --- | --- |
+| Informe editable, 18 páginas | [Informe_EnergyOps.docx](output/entrega/Informe_EnergyOps.docx) |
+| Mismo informe en PDF | [Informe_EnergyOps.pdf](output/entrega/Informe_EnergyOps.pdf) |
+| Póster actualizado | [Poster_EnergyOps.pdf](output/entrega/Poster_EnergyOps.pdf) |
+| Demo actual narrada en español, 2:22 | [Demo_EnergyOps.mp4](output/entrega/Demo_EnergyOps.mp4) |
+| Explicación, pitch y preguntas | [GUIA_PARA_PRESENTAR.md](GUIA_PARA_PRESENTAR.md) |
+| Instrucciones de entrega | [LEEME_ENTREGA.md](LEEME_ENTREGA.md) |
 
-`INICIAR.cmd` abre la aplicación aunque no esté disponible el modelo local. Claude y los análisis directos pueden usarse por separado. Las dependencias básicas de Python siguen siendo necesarias.
-
-**Evaluación original:** `runtime.sqlite3`, el benchmark y el video conservan el escenario del 2 de marzo y sus 32,832 lecturas. El póster actualizado presenta la cobertura ampliada y diferencia las métricas históricas. Las lecturas originales se preservan sin cambios al extender el generador. Las métricas históricas no representan una evaluación de los modos de recuperación ni de todo el intervalo ampliado.
-
-
-
-Aplicación para la feria del 2 de noviembre de 2026. Reutiliza el motor y protocolo de [energyops-mcp](https://github.com/iancumes/energyops-mcp) (MIT) en una copia independiente. No requiere modificar Redes ni conectar sus servidores de archivos, Git o inventario.
+`python scripts/package_release.py` genera el ZIP conjunto después de guardar la versión en Git. Incluye documentos, video, guía y código sin credenciales, pesos ni bases generadas.
 
 ## Ejecutar
 
-En este equipo: doble clic en `INICIAR.cmd`. Interfaz: http://127.0.0.1:8765. Póster: http://127.0.0.1:8765/poster. La guía es `GUIA_PARA_PRESENTAR.md`.
+En este equipo: doble clic en **INICIAR.cmd**. Interfaz: http://127.0.0.1:8765; póster: `/poster`; informe: `/report.pdf`.
 
-En otro equipo Windows con Python 3.13 o superior:
+En otro equipo Windows con Python 3.13:
 
 ```powershell
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-lock.txt
+.\INICIAR.cmd
+```
+
+Claude lee `ANTHROPIC_API_KEY` del entorno o de `.env.local`. El ejemplo `.env.example` no contiene una clave. La credencial permanece en el servidor y está excluida de Git. Los botones directos calculan sin credenciales. Qwen3 es opcional:
+
+```powershell
 python setup_local.py
 .\INICIAR.cmd
 ```
 
-`setup_local.py` descarga los pesos oficiales Qwen3 Q8_0 y llama.cpp CPU. Los binarios y pesos están ignorados en Git. El modo local no necesita credenciales. El modo Claude lee `ANTHROPIC_API_KEY` desde `.env.local` o del entorno. Nunca publiques ese archivo. El navegador no recibe la credencial.
+El instalador descarga pesos oficiales Qwen3-0.6B Q8_0 y llama.cpp CPU b12061. Se guardan en `local_runtime/`, fuera de Git. Configuración local: contexto 2048, ocho hilos y un slot. El inicio de la aplicación continúa si no está instalado.
 
-## Reproducir resultados
+## Datos y alcance
 
-Inicia primero el producto. Después:
+`dashboard.sqlite3` se genera automáticamente con datos sintéticos. Al corte de entrega tiene **176,256 lecturas**, seis medidores y **306 días completos**, del 5 de enero al 6 de noviembre de 2026, en intervalos de 15 minutos. Cinco circuitos son de consumo y uno solar. Incluso el día actual es simulado, no una medición en tiempo real.
+
+La fecha predeterminada sigue el día de Guatemala. Para reproducir la entrega, definir antes de iniciar los procesos:
 
 ```powershell
-python evaluate.py
-python build_poster.py
-python -m pip install -r requirements-dev.txt
-python -m pytest tests -q
+$env:ENERGYOPS_TODAY = '2026-11-06'
+python app.py
 ```
 
-`evaluate.py` ejecuta 30 consultas reales a Claude y 25 llamadas al MCP, por lo que consume API. Los casos y sus etiquetas están en `evaluation/cases.json`. Las predicciones por caso, tokens y tiempos están en `evaluation/results.json`. El benchmark local previo se conserva en `evaluation/results_local.json`. Para repetirlo: `python evaluate.py --local`. Los ejemplos se guardan explícitamente para respaldo, sin hacerse pasar por inferencias nuevas.
+`runtime.sqlite3` conserva el escenario histórico del 2 de marzo con 32,832 lecturas. Las bases están ignoradas y se regeneran. La extensión conserva el prefijo original del generador.
 
-La exactitud mide selección de herramienta. La revisión de argumentos valida campos críticos de fecha/edificio/horizonte/bandas, no equivalencia exhaustiva del resultado. Se evaluaron pipelines distintos: Claude extrae argumentos con tool calling, Qwen3 clasifica y usa un extractor por reglas. El baseline busca palabras clave. Los casos son sintéticos, con referencias definidas al redactarlos, sin revisión humana independiente. No se midió calidad general ni tasa de alucinaciones.
+La motivación provino de un contexto laboral de administración de tiendas, descrito de manera anónima. La demo tiene un edificio simulado. La recepción empresarial comunicada por el equipo es informal; no se presenta como estudio independiente ni como ahorro real medido.
 
-## Archivos
+## Resultados finales
 
-- `app.py`: prompts, proveedores, extracción local, cliente MCP, plantillas y HTTP local.
-- `index.html`: web de feria y selector de modelos.
-- `energyops_mcp/`: motor reutilizado, datos, SQLite, algoritmos y protocolo.
-- `evaluate.py`, `evaluation/`: conjunto de evaluación, baseline y resultados medidos.
-- `tests/`: pruebas heredadas del motor y protocolo. La ruta de la fixture se adaptó al paquete local.
-- `build_poster.py`, `output/pdf/`: generador, póster PDF y vista PNG.
-- `GUIA_PARA_PRESENTAR.md`: pitch, demo, resultados y preguntas técnicas.
+Los **60 casos finales** se congelaron en el commit `b71d310` antes de medir; son distintos de los 30 originales y las 24 sondas de desarrollo.
 
-El conjunto tiene 32,832 lecturas sintéticas, semilla 1337, día objetivo 2026-03-02. Se mantienen separados cinco medidores de consumo y uno solar. No hay RAG, embeddings, fine-tuning ni control de dispositivos físicos. Los algoritmos consideran la resolución de 15 minutos y las condiciones configuradas del escenario.
+| Pipeline | Herramienta correcta | Tarea y campos críticos | F1 macro |
+| --- | --- | --- | --- |
+| Palabras clave | 24/60 · 40.0% | No medido | 0.432 |
+| Reglas y extracción | 38/60 · 63.3% | 63.3% | 0.658 |
+| Qwen3 local | 57/60 · 95.0% | 95.0% | 0.951 |
+| Claude Haiku 4.5 | 58/60 · 96.7% | 96.7% | 0.967 |
 
-## Fuentes técnicas
+Evidencia: `evaluation/final_cases.json` y `evaluation/final_results.json`, con parámetros, tokens, tiempos y errores por caso. Raw y reviewed coinciden en esta muestra: no se atribuye una mejora inexistente a la revisión. El control de peticiones múltiples se añadió después y se comprueba por regresión, sin alterar la puntuación del modelo.
 
-- [MCP: herramientas, especificación 2025-06-18](https://modelcontextprotocol.io/specification/2025-06-18/server/tools).
-- [Claude Haiku 4.5](https://platform.claude.com/docs/en/models/haiku-4-5/overview).
-- [Precios Claude](https://platform.claude.com/docs/en/about-claude/pricing): estimación USD 1/M entrada y USD 5/M salida. No incluye impuestos ni costos de hardware.
-- [Pesos oficiales Qwen3-0.6B-GGUF](https://huggingface.co/Qwen/Qwen3-0.6B-GGUF).
-- [llama.cpp](https://github.com/ggml-org/llama.cpp), runtime CPU versión b12061.
+Media LLM + MCP: Claude 1.894 s; Qwen3 0.740 s. API de Claude estimada: USD 0.1578 total, USD 0.00263 por caso. Se excluyen arranque, descubrimiento y navegador. Concurrencia Claude 3 y local 1: no es una comparación controlada de velocidad. Hardware y energía no medidos.
 
-## Publicación
+El detector se calibró en diez semillas y se probó en otras veinte. Subir el piso de desviación de 0.1 a **0.2 kWh** redujo falsos positivos de 24 a 0, manteniendo 40 verdaderos positivos en 9,600 intervalos sintéticos. Solo cubre el tipo de pico inyectado. Evidencia: `evaluation/detection_results.json`. Auditoría y resultados MCP: `evaluation/release_audit.json`.
 
-Esta carpeta es la entrega local de la feria. No contiene el informe del viernes. Antes de publicar, usar `.gitignore`, excluir `.env.local`, bases, logs y `local_runtime/`. El código reutilizado conserva `LICENSE`. El estado del repositorio y del video se registra al completar la entrega; no se debe afirmar publicación remota sin una URL verificada.
+Las etiquetas son sintéticas, sin revisión humana independiente. Un acierto adicional no prueba superioridad estadística. No medimos calidad general, ahorro real ni disponibilidad de producción.
 
-Repositorio privado: https://github.com/dev1retailtecno/proyecto3-energyops-llm
+## Repetir y verificar
 
-Video de respaldo: `output/demo/Demo_EnergyOps.mp4` (grabación de uso real, sin narración). El repositorio es privado: otorga acceso al catedrático antes de entregarlo.
+```powershell
+python -m pytest tests -q
+python scripts/check_http.py
+python scripts/audit_release.py
+python scripts/evaluate_detection.py
+python scripts/evaluate_final.py --output evaluation/repeticion_final.json
+```
 
-Mejora visual de la feria: póster con gráfica comparativa y pipeline horizontal, indicadores de resultados, gráfica por circuito, copia de respuesta y descarga JSON. El video conserva la interfaz inicial y demuestra el mismo flujo funcional.
+La última orden requiere ambos modelos disponibles, consume API y no sobrescribe una medición existente. Respuestas y tiempos pueden variar. Los resultados originales se conservan en `evaluation/results*.json`; `robustness_before.json` y `robustness_after.json` documentan el ajuste observado de las 24 sondas, no una prueba imparcial de generalización.
 
+Figuras y póster: `python scripts/build_figures.py` y `python build_poster.py`. Regeneración del informe:
 
-## Interpretación de consultas informales
+```powershell
+python -m pip install -r requirements-report.txt
+python scripts/build_report.py
+python scripts/render_report.py
+```
 
-Se agregó normalización conservadora de abreviaciones y errores frecuentes, fechas DD/MM/YYYY, horas am/pm, duraciones en minutos o palabras y períodos de N días. El prompt incluye ejemplos y contraste entre intenciones; un verificador revisa contradicciones claras de intención y campos explícitos. Los ajustes se registran en `usage.interpretation_repairs` del JSON descargable y se avisan en la respuesta. No se cambiaron los pesos de los modelos.
+El renderizado usado ejecuta el renderizador de documentos de Codex con un adaptador de Word y PyMuPDF porque no había LibreOffice. Requiere Windows y Microsoft Word; si el runtime de documentos de Codex está disponible usa su renderizador, y en otro equipo exporta directamente con Word. La fuente está en `docs/INFORME.md`; el DOCX entregado se puede editar directamente sin regenerarlo. Las 18 páginas se renderizaron y revisaron visualmente.
 
-Pruebas antes/después guardadas en `evaluation/robustness_before.json` y `evaluation/robustness_after.json`. Para medir de nuevo usa `python evaluate_robustness.py nueva_prueba` con una etiqueta sin usar; el script evita sobrescribir evidencia. **El código actual siempre prueba la versión actual**: para reproducir la versión anterior se necesita el commit previo a esta mejora. Los archivos guardados corresponden a las dos versiones efectivamente medidas. Sobre 24 consultas sintéticas ruidosas, tarea y campos críticos correctos: Claude 21/24 a 24/24; Qwen3 local 11/24 a 24/24. Esto mide el pipeline con normalización y validación, no solo el modelo. Son sondas de desarrollo sin revisión humana independiente ni estimación imparcial de generalización. Las métricas históricas del póster y del benchmark original se mantienen separadas.
+## Continuidad y límites
+
+Automático intenta Claude, Qwen3 y reglas para tareas reconocidas, identificando el modo. Los botones directos usan MCP sin inferencia. Hay límites de espera, reconexión MCP y resultados guardados por coincidencia exacta de herramienta y argumentos. Los datos parciales se advierten; batería y horarios requieren continuidad. Si no puede resolver, conserva la pregunta y ofrece orientación. No se garantiza disponibilidad absoluta.
+
+El servicio escucha solo en `127.0.0.1` y rechaza POST con Origin ajeno. No tiene autenticación multiusuario para exposición pública. No controla equipos ni certifica instalaciones. No se aplicó fine-tuning ni RAG: la adaptación usa prompts, ejemplos, salida estructurada y herramientas.
+
+## Organización y atribución
+
+- `app.py`, `index.html`, `live_data.py`: orquestación, interfaz y cobertura ampliada.
+- `energyops_mcp/`: protocolo, SQLite, generador y algoritmos.
+- `scripts/`, `evaluation/`, `tests/`: medición, auditoría, regresión y generadores de entregables.
+- `docs/`: informe, prompts y guion del video.
+- `output/entrega/`: archivos finales para subir.
+
+Se reutilizó [EnergyOps MCP](https://github.com/iancumes/energyops-mcp), con licencia MIT conservada en `LICENSE`. Las fuentes primarias de modelos y protocolo están citadas en el informe.
+
+Repositorio verificado: **https://github.com/dev1retailtecno/proyecto3-energyops-llm**. Es público y permite acceso sin invitación.

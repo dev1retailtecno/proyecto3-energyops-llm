@@ -1,0 +1,2 @@
+# Preserve the byte-level fingerprint of evaluation sets across platforms.
+evaluation/*.json text eol=lf

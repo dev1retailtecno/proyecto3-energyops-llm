@@ -9,3 +9,6 @@ local_runtime/
 *.log
 .playwright-cli/
 .pytest_cache/
+output/demo/*_raw.webm
+output/entrega/*.zip
+output/entrega/MANIFIESTO.json

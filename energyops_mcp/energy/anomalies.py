@@ -21,7 +21,7 @@ from typing import Any
 from .timeutil import INTERVAL_MINUTES, from_utc_iso, is_weekend, to_local
 
 MIN_REFERENCE_OBSERVATIONS = 7
-MIN_EXCESS_KWH = 0.1
+MIN_EXCESS_KWH = 0.2  # Selected on development seeds 100..109; see evaluation/detection_results.json.
 ROBUST_SCALE = 1.4826
 THRESHOLD_DEVIATIONS = 3.0
 

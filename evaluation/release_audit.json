@@ -1,0 +1,372 @@
+{
+  "as_of": "2026-11-06",
+  "overview": {
+    "today": "2026-11-06",
+    "first_day": "2026-01-05",
+    "last_day": "2026-11-06",
+    "selected_date": "2026-11-06",
+    "period": "day",
+    "source": "Datos sintéticos reproducibles; días completos simulados, no medición en tiempo real.",
+    "building": "Edificio Demo UVG",
+    "readings": 176256,
+    "days": 306,
+    "meters": 6,
+    "selected": {
+      "day": "2026-11-06",
+      "consumption_kwh": 189.384,
+      "generation_kwh": 71.2,
+      "readings": 576
+    },
+    "change_pct": 0.2,
+    "selection": {
+      "start": "2026-11-06",
+      "end": "2026-11-06",
+      "days": 1,
+      "consumption_kwh": 189.384,
+      "generation_kwh": 71.2,
+      "readings": 576,
+      "expected_readings": 576
+    },
+    "daily": [
+      {
+        "day": "2026-10-08",
+        "consumption_kwh": 189.371,
+        "generation_kwh": 69.929,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-09",
+        "consumption_kwh": 190.079,
+        "generation_kwh": 73.147,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-10",
+        "consumption_kwh": 120.891,
+        "generation_kwh": 70.23,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-11",
+        "consumption_kwh": 120.702,
+        "generation_kwh": 68.997,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-12",
+        "consumption_kwh": 188.788,
+        "generation_kwh": 70.652,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-13",
+        "consumption_kwh": 189.155,
+        "generation_kwh": 72.475,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-14",
+        "consumption_kwh": 187.472,
+        "generation_kwh": 67.599,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-15",
+        "consumption_kwh": 190.077,
+        "generation_kwh": 71.838,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-16",
+        "consumption_kwh": 188.24,
+        "generation_kwh": 68.773,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-17",
+        "consumption_kwh": 120.804,
+        "generation_kwh": 69.097,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-18",
+        "consumption_kwh": 121.487,
+        "generation_kwh": 70.095,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-19",
+        "consumption_kwh": 189.411,
+        "generation_kwh": 70.747,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-20",
+        "consumption_kwh": 187.41,
+        "generation_kwh": 70.163,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-21",
+        "consumption_kwh": 188.614,
+        "generation_kwh": 72.044,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-22",
+        "consumption_kwh": 188.567,
+        "generation_kwh": 72.402,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-23",
+        "consumption_kwh": 189.092,
+        "generation_kwh": 69.487,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-24",
+        "consumption_kwh": 120.017,
+        "generation_kwh": 68.112,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-25",
+        "consumption_kwh": 121.612,
+        "generation_kwh": 71.722,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-26",
+        "consumption_kwh": 189.468,
+        "generation_kwh": 72.166,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-27",
+        "consumption_kwh": 188.679,
+        "generation_kwh": 71.156,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-28",
+        "consumption_kwh": 188.244,
+        "generation_kwh": 70.372,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-29",
+        "consumption_kwh": 188.277,
+        "generation_kwh": 69.414,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-30",
+        "consumption_kwh": 189.065,
+        "generation_kwh": 72.294,
+        "readings": 576
+      },
+      {
+        "day": "2026-10-31",
+        "consumption_kwh": 120.873,
+        "generation_kwh": 68.858,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-01",
+        "consumption_kwh": 120.704,
+        "generation_kwh": 69.039,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-02",
+        "consumption_kwh": 189.101,
+        "generation_kwh": 70.07,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-03",
+        "consumption_kwh": 189.52,
+        "generation_kwh": 69.82,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-04",
+        "consumption_kwh": 188.571,
+        "generation_kwh": 69.746,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-05",
+        "consumption_kwh": 189.011,
+        "generation_kwh": 68.406,
+        "readings": 576
+      },
+      {
+        "day": "2026-11-06",
+        "consumption_kwh": 189.384,
+        "generation_kwh": 71.2,
+        "readings": 576
+      }
+    ],
+    "month_consumption_kwh": 1066.291
+  },
+  "quality": {
+    "rows": 176256,
+    "minimum_kwh": 0.0,
+    "maximum_kwh": 2.5,
+    "negative_values": 0,
+    "meters": 6,
+    "duplicate_keys": 0,
+    "complete_days": 306,
+    "total_days": 306,
+    "missing_intervals": 0
+  },
+  "today_per_circuit": {
+    "critical": 59.1962,
+    "equipment": 39.4072,
+    "hvac": 71.2669,
+    "lighting": 11.5271,
+    "pump": 7.9865,
+    "solar": 71.2
+  },
+  "outputs": {
+    "get_energy_summary": {
+      "data": {
+        "building_id": "demo-building",
+        "consumption_kwh": 189.3839,
+        "generation_kwh": 71.2,
+        "peak_demand_kw": 16.9312,
+        "average_demand_kw": 7.891,
+        "per_circuit_kwh": {
+          "lighting": 11.5271,
+          "hvac": 71.2669,
+          "critical": 59.1962,
+          "pump": 7.9865,
+          "equipment": 39.4072,
+          "solar": 71.2
+        },
+        "data_quality": {
+          "lighting": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          },
+          "hvac": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          },
+          "critical": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          },
+          "pump": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          },
+          "equipment": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          },
+          "solar": {
+            "intervals_present": 96,
+            "intervals_expected": 96,
+            "completeness_pct": 100.0
+          }
+        },
+        "is_partial": false,
+        "interpretation": "Complete meter intervals for the requested period."
+      },
+      "answer": "Periodo 2026-11-06T00:00:00-06:00 a 2026-11-07T00:00:00-06:00: consumo 189.38 kWh, generacion solar 71.20 kWh, demanda maxima 16.93 kW, demanda promedio 7.89 kW."
+    },
+    "detect_anomalies": {
+      "data": {
+        "incidents": [
+          {
+            "meter_id": "demo-building:equipment",
+            "start_utc": "2026-03-02T08:00:00+00:00",
+            "end_utc": "2026-03-02T08:30:00+00:00",
+            "duration_minutes": 30,
+            "expected_kwh": 0.1391,
+            "observed_kwh": 1.7663,
+            "excess_kwh": 1.6273,
+            "rule": "|observado-mediana| > max(3.0*1.4826*MAD, 0.2 kWh), con al menos 7 observaciones de referencia para el mismo horario y tipo de dia (laborable/fin de semana)"
+          }
+        ],
+        "diagnostics": {
+          "target_intervals_evaluated": 480,
+          "target_intervals_with_insufficient_history": 0,
+          "min_reference_observations": 7,
+          "rule": "|observado-mediana| > max(3.0*1.4826*MAD, 0.2 kWh), con al menos 7 observaciones de referencia para el mismo horario y tipo de dia (laborable/fin de semana)"
+        }
+      },
+      "answer": "1 alertas para revisar. Horarios de Guatemala (UTC-6).\nequipment: 02:00 a 02:30, desviación 1.627 kWh\nSon alertas estadísticas, no fallas confirmadas. El pico de prueba inyectado corresponde únicamente al 2 de marzo de 2026. Puede haber alertas adicionales en otros días."
+    },
+    "optimize_schedule": {
+      "data": {
+        "feasible": true,
+        "original": {
+          "starts_minute": {
+            "demo-building:load-1": 480,
+            "demo-building:load-2": 780
+          },
+          "cost": 29.8426,
+          "max_demand_kw": 18.2188
+        },
+        "proposed": {
+          "starts_minute": {
+            "demo-building:load-1": 555,
+            "demo-building:load-2": 0
+          },
+          "cost": 29.5426,
+          "max_demand_kw": 16.9312
+        },
+        "savings_variable_cost": 0.3,
+        "reason_if_infeasible": null,
+        "note": "Optimo dentro de las restricciones y resolucion de 15 minutos de este modelo; no es un optimo universal de todos los esquemas de programacion posibles."
+      },
+      "answer": "Horarios propuestos (hora de Guatemala):\ndemo-building:load-1: 09:15\ndemo-building:load-2: 00:00\nCosto original: USD 29.8426. Costo propuesto: USD 29.5426. Ahorro: USD 0.3000.\nTarifa ficticia. Óptimo dentro de las restricciones y resolución de 15 minutos de este escenario."
+    },
+    "simulate_outage": {
+      "data": {
+        "battery_id": "demo-building:battery-1",
+        "full_building": {
+          "autonomy_minutes": 0,
+          "autonomy_is_lower_bound": false,
+          "horizon_minutes": 1440,
+          "depleted_reason": "power_insufficient",
+          "total_solar_kwh": 71.2,
+          "total_solar_used_kwh": 71.2,
+          "total_solar_curtailed_kwh": 0.0,
+          "total_unmet_kwh": 110.5839
+        },
+        "critical_only": {
+          "autonomy_minutes": 180,
+          "autonomy_is_lower_bound": false,
+          "horizon_minutes": 1440,
+          "depleted_reason": "energy_exhausted",
+          "total_solar_kwh": 71.2,
+          "total_solar_used_kwh": 26.9383,
+          "total_solar_curtailed_kwh": 35.8406,
+          "total_unmet_kwh": 17.0579
+        }
+      },
+      "answer": "Edificio completo: 0 minutos de respaldo continuo. La batería no puede entregar la potencia que exige el edificio desde el primer intervalo.\n\nSolo cargas críticas: 180 minutos (3 horas).\n\nSimulación con reserva, eficiencias, potencia máxima y generación solar."
+    }
+  },
+  "environment": {
+    "python": "3.13.2",
+    "platform": "Windows-11-10.0.26300-SP0",
+    "processor": "Intel64 Family 6 Model 186 Stepping 2, GenuineIntel"
+  },
+  "source_sha256": {
+    "app.py": "76c2946674648fa2465f7c9e857b96aa9be7680c4db0595d27f9631aaf6b9c6d",
+    "query_understanding.py": "b97861f97d326e885d5bdd67a5a92d108edcbef05d4f3bb874d66f36f22cd6c6",
+    "live_data.py": "a575323e43619e881675217f433829dbcde37f6b608018761bf46a644822c543",
+    "energyops_mcp/energy/anomalies.py": "83c78830f0759300f207d3bbb4d9620675b20adb84424c6497207a1da748d50e"
+  }
+}

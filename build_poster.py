@@ -12,9 +12,9 @@ import pymupdf
 ROOT=Path(__file__).resolve().parent
 
 def main():
-    s=json.loads((ROOT/'evaluation/results.json').read_text(encoding='utf-8'))['summary']
-    local=json.loads((ROOT/'evaluation/results_local.json').read_text(encoding='utf-8'))['summary']
-    snapshot=json.loads((ROOT/'evaluation/poster_current_snapshot.json').read_text(encoding='utf-8'))
+    final=json.loads((ROOT/'evaluation/final_results.json').read_text(encoding='utf-8'))['summary'];s=final['claude']
+    local=final['local']
+    audit=json.loads((ROOT/'evaluation/release_audit.json').read_text(encoding='utf-8'));snapshot={'overview':audit['overview'],'outage':audit['outputs']['simulate_outage'],'scenario_date':audit['as_of']}
     coverage=snapshot['overview']
     outage=snapshot['outage']['data']
     out=ROOT/'output/pdf';out.mkdir(parents=True,exist_ok=True)
@@ -41,29 +41,29 @@ def main():
     txt('UVG  /  CC3092 DEEP LEARNING Y SISTEMAS INTELIGENTES',48,23,11,'#73e5c5',True,1000)
     txt('EnergyOps',46,47,61,'#ffffff',True,950)
     txt('Análisis energético con lenguaje natural y herramientas verificables',50,132,22,'#d4e8ec',False,1040)
-    txt('Ian Cumes  /  Feria científica  /  Actualizado al 2 de noviembre de 2026',50,173,12,'#91b7c2',False,1000)
+    txt('Ian Cumes 23236  /  Javier Valladares 23045  /  6 de noviembre de 2026',50,173,12,'#91b7c2',False,1000)
     txt(f"{round(s['route_accuracy']*s['n'])}/{s['n']}",1136,42,48,'#73e5c5',True,270)
-    txt('selecciones correctas de Claude<br/>en el benchmark original',1140,112,13,'#d4e8ec',False,250)
+    txt('selecciones correctas de Claude<br/>en 60 casos nuevos de prueba',1140,112,13,'#d4e8ec',False,250)
     # Upper row: the problem, comparative evidence and a concrete decisión.
     section('01','Problema y propuesta',48,237,375)
     txt('Un administrador necesita entender su consumo, investigar picos y evaluar el respaldo de un edificio.',48,280,17,ink,False,360)
     txt('EnergyOps convierte una pregunta en una operación trazable: el LLM interpreta y el motor calcula.',48,373,17,ink,True,360)
     txt('Cobertura ampliada de la aplicación',48,467,12,teal,True,360)
     txt(f"{coverage['readings']:,}",48,490,37,ink,True,360)
-    txt(f"lecturas sintéticas / {coverage['days']} días / 6 medidores<br/>05 ene - 02 nov 2026 / intervalos de 15 min<br/>SQLite / semilla 1337 / hora de Guatemala<br/>Días completos simulados, sin sensores reales.",48,544,13,muted,False,370)
+    txt(f"lecturas sintéticas / {coverage['days']} días / 6 medidores<br/>05 ene - 06 nov 2026 / intervalos de 15 min<br/>SQLite / semilla 1337 / hora de Guatemala<br/>Días completos simulados, sin sensores reales.",48,544,13,muted,False,370)
     line(438,240,438,599)
     section('02','Evaluación comparativa',472,237,470)
-    txt('Benchmark original: 2 de marzo / 32,832 lecturas',472,275,11,muted,False,460)
+    txt('Conjunto final congelado / 60 casos / 6 intenciones',472,275,11,muted,False,460)
     txt('Exactitud al seleccionar la herramienta (%)',472,296,13,muted,False,460)
-    bars=[('Palabras clave',s['baseline_accuracy'],s['baseline_macro_f1'],'#9aaeb8'),('Qwen3 local',local['route_accuracy'],local['macro_f1'],'#44ad9f'),('Claude + MCP',s['route_accuracy'],s['macro_f1'],teal)]
+    bars=[('Palabras clave',final['keyword_baseline']['route_accuracy'],final['keyword_baseline']['macro_f1'],'#9aaeb8'),('Reglas',final['rules_baseline']['route_accuracy'],final['rules_baseline']['macro_f1'],'#6688a1'),('Qwen3 local',local['route_accuracy'],local['macro_f1'],'#44ad9f'),('Claude + MCP',s['route_accuracy'],s['macro_f1'],teal)]
     y=326
     for label,value,f1,color in bars:
         txt(label,472,y,15,ink,True,260)
         txt(f'{value:.1%}',826,y-2,18,color,True,110)
-        rect(472,y+29,450,15,'#e1e9ea',4);rect(472,y+29,450*value,15,color,4)
-        txt(f'F1 macro: {f1:.3f}',472,y+49,11,muted,False,450)
-        y+=81
-    txt('30 casos sintéticos, 5 por cada una de 6 intenciones.<br/>Claude: campos de argumentos 100%; MCP sin error 25/25.<br/>Qwen3 usa extracción por reglas; Claude, tool calling.<br/>Comparación de pipelines, no de modelos aislados.',472,569,11.5,muted,False,470)
+        rect(472,y+25,450,12,'#e1e9ea',4);rect(472,y+25,450*value,12,color,4)
+        txt(f'F1 macro: {f1:.3f}',472,y+39,10,muted,False,450)
+        y+=62
+    txt('60 casos sintéticos nuevos, 10 por intención.<br/>Claude: tarea y campos críticos 58/60; MCP 50/50.<br/>Qwen3: tarea y campos críticos 57/60; MCP 51/51.<br/>Una ejecución válida puede responder una tarea equivocada.',472,569,11.5,muted,False,470)
     rect(978,236,414,367,light,14)
     txt('03   UNA DECISIÓN CONCRETA',1002,258,12,teal,True,365)
     txt('¿Qué mantengo encendido<br/>durante un apagón?',1002,294,23,ink,True,365)
@@ -88,10 +88,10 @@ def main():
             line(x+255,744,x+268,744,teal);line(x+268,744,x+264,740,teal);line(x+268,744,x+264,748,teal)
     # Lower row: method, operational measures and limitations.
     section('05','Adaptación y continuidad',48,837,670)
-    txt('Prompting y herramientas, sin fine-tuning ni RAG. Recuperación Claude / Qwen3 / reglas explícitas; consultas directas sin LLM. Reconexión MCP y resultados guardados identificados.',48,876,13,muted,False,650)
-    txt(f"<b>{s['mean_e2e_latency_s']:.2f} s</b> y <b>US${s['estimated_cost_usd']/s['n']:.4f}</b> por consulta: benchmark original de Claude*",48,934,13,teal,False,660)
+    txt('Prompting y herramientas; continuidad Claude / Qwen3 / reglas. Detector MAD calibrado con 10 semillas: piso 0.2 kWh. En 20 semillas nuevas: 40 positivos detectados y falsas alarmas de 24 a 0. Solo escenarios sintéticos.',48,876,13,muted,False,650)
+    txt(f"<b>{s['mean_llm_mcp_s']:.2f} s</b> y <b>US${s['estimated_cost_usd']/s['n']:.4f}</b> por consulta: evaluación final de Claude*",48,934,13,teal,False,660)
     section('06','Alcance de la evidencia',750,837,642)
-    txt('Muestra sintética pequeña, sin validación humana independiente. Las métricas no evalúan todo el intervalo ampliado ni los modos de continuidad. No garantizan disponibilidad. Tarifas ficticias; posibles falsas alertas. Sin tasa general de alucinación medida.',750,876,13,muted,False,642)
+    txt('Referencias sintéticas, sin validación humana independiente. Los resultados no garantizan generalización, disponibilidad ni exactitud universal. El detector se evaluó con un tipo de pico grande. Tarifas ficticias; sin ahorro empresarial real medido.',750,876,13,muted,False,642)
     txt('*Excluye conexión inicial, descubrimiento y renderizado. Fuentes: modelcontextprotocol.io / platform.claude.com/docs / huggingface.co/Qwen/Qwen3-0.6B-GGUF. Motor reutilizado: energyops-mcp (MIT).',48,976,8,muted,False,1344)
     c.save()
     with pymupdf.open(out/'Poster_EnergyOps.pdf') as doc:

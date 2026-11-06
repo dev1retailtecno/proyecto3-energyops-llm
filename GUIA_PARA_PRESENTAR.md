@@ -1,296 +1,154 @@
-# EnergyOps: guía para presentar y entender el proyecto
+# EnergyOps: guía para entender y presentar
 
-## Actualización de la aplicación: más fechas y continuidad
-
-La aplicación actual permite consultar **datos simulados del 5 de enero al 2 de noviembre de 2026**: 173,952 lecturas. Usa el calendario y las vistas de día, 7 días o mes. Puedes preguntar “Resume el consumo de hoy”, “¿Cuánto consumimos esta semana?” o “Resume el consumo de octubre”. Los análisis rápidos funcionan sin modelos y se identifican como consulta directa.
-
-Si Claude falla, intenta Qwen3; si tampoco está disponible, puede continuar con reglas básicas, siempre indicando ese modo. Cuando faltan datos o algún parámetro no es válido, conserva la pregunta y ofrece sugerencias. En “Consultas recientes” puedes abrir resultados anteriores, identificados como guardados. La aplicación ya no depende de que Qwen3 esté disponible para abrirse.
-
-**El pitch, las preguntas de ejemplo y las métricas que siguen describen el escenario original del 2 de marzo. El póster actualizado incorpora la cobertura ampliada y distingue esas métricas históricas.** Se mantienen como referencia de la feria. El conjunto original tiene 32,832 lecturas; no confundas ese benchmark con la cobertura ampliada de la aplicación. Los datos de hoy también son sintéticos, de día completo, no lecturas en tiempo real.
-
-
+Ian Cumes · 23236 — Javier Valladares · 23045
+Versión final del 6 de noviembre de 2026. Corresponde al informe, póster y video finales.
 
 ## Qué es el proyecto
 
-**EnergyOps es una aplicación web que permite hacer análisis energético de un edificio mediante preguntas en español.** Está pensada para un administrador que necesita entender cuánto se consume, revisar comportamientos inusuales, decidir cuándo operar ciertas cargas o estimar cuánto tiempo puede funcionar con batería durante un apagón.
+EnergyOps es una aplicación web para consultar el consumo energético de un edificio con preguntas en español. Ayuda a un administrador a entender el consumo, encontrar intervalos inusuales, comparar horarios y estimar el respaldo de batería ante un apagón.
 
-Por ejemplo, el usuario puede escribir “¿Cuánto aguanta la batería si solo mantenemos las cargas críticas?”. El sistema interpreta la pregunta, ejecuta la simulación correspondiente y presenta el resultado junto con los parámetros utilizados. Así, el usuario puede consultar sin aprender comandos ni ejecutar cálculos manualmente.
+La motivación surgió de un contexto laboral en una empresa que administra varias tiendas. En la entrega usamos un edificio de demostración y datos sintéticos reproducibles. La recepción favorable comunicada por el equipo es informal: no hicimos una encuesta ni medimos ahorro real de una empresa.
 
-El producto integra dos capacidades: **el LLM interpreta lenguaje natural y las herramientas realizan los cálculos**. Esto permite aprovechar la flexibilidad del modelo para entender distintas maneras de preguntar y conservar un cálculo verificable para los números.
+La idea principal es: **el modelo interpreta lo que pedimos y las herramientas calculan los números**. Así combinamos flexibilidad para preguntar con resultados que se pueden comprobar.
 
-La versión de la feria trabaja con un **edificio de demostración y lecturas sintéticas reproducibles**. El problema corresponde a una necesidad operativa concreta, pero todavía no validamos el producto con un administrador real ni lo conectamos a medidores físicos. Presentamos un prototipo funcional del flujo completo.
+## Cómo funciona
 
-### Qué puede hacer
+1. Seleccionamos una fecha y escribimos la consulta en la web.
+2. Claude Haiku 4.5 interpreta la tarea y genera una llamada estructurada. Qwen3 local clasifica la intención y un extractor Python obtiene los parámetros. Son dos pipelines distintos.
+3. La aplicación valida formato, edificio, fechas y límites. Una petición ambigua o de varias tareas puede necesitar aclaración.
+4. El cliente llama por **MCP** a una herramienta de un servidor real en otro proceso, conectado mediante stdio.
+5. La herramienta consulta **SQLite**, ejecuta el algoritmo y devuelve cifras y evidencia.
+6. La web presenta resultado, herramienta y parámetros. Podemos descargar JSON y las lecturas en CSV.
 
-| Función | Pregunta de ejemplo | Resultado útil |
-| --- | --- | --- |
-| Consultar edificios | “¿Qué edificios puedo analizar?” | Identificación del edificio y sus medidores. |
-| Resumir consumo | “Resume el consumo del 2 de marzo de 2026” | Energía consumida, generación solar y demanda máxima y promedio. |
-| Detectar anomalías | “Busca consumos raros en los equipos el día de demostración” | Intervalos que conviene investigar por desviarse del comportamiento histórico. |
-| Optimizar horarios | “¿A qué hora conviene encender las cargas para pagar menos?” | Horarios propuestos y comparación de costos bajo la tarifa del escenario. |
-| Simular un apagón | “Compara el respaldo del edificio y de las cargas críticas” | Minutos de autonomía y condiciones que limitan el respaldo. |
+Las cinco herramientas son `list_buildings`, `get_energy_summary`, `detect_anomalies`, `optimize_schedule` y `simulate_outage`. La sexta decisión del evaluador es `clarify`: pedir una aclaración.
 
-Cada consulta resuelve una tarea principal. Si faltan datos indispensables o la petición está fuera del alcance, el sistema puede pedir una aclaración. Las alertas y simulaciones apoyan el análisis del escenario; no certifican el estado de una instalación.
+La respuesta numérica usa plantillas con la salida del motor, sin una segunda llamada al LLM. JSON Schema comprueba estructura y tipos; no garantiza que el modelo entendiera correctamente la petición. Por eso evaluamos sus decisiones y parámetros.
 
-## Cómo funciona, de principio a fin
+## Qué hicimos
 
-### 1. Preparamos la fuente de información
+Reutilizamos el motor EnergyOps MCP de Redes, conservando su licencia MIT. Construimos una aplicación independiente para Deep Learning: web, integración real de Claude y Qwen3, interpretación de lenguaje natural, validación, evaluación y continuidad. No fue necesario modificar el proyecto de Redes.
 
-El motor genera un conjunto fijo de **32,832 lecturas**, usando semilla 1337 para poder reproducirlo. Son 57 días de datos: ocho semanas de historia y el día objetivo, **2 de marzo de 2026**. Cada día tiene 96 intervalos de 15 minutos y seis medidores: cinco de consumo y uno solar.
+Ampliamos los datos a **176,256 lecturas**, seis medidores y **306 días completos**, del 5 de enero al 6 de noviembre de 2026. Se registra un intervalo de 15 minutos por medidor. Cinco circuitos consumen energía y uno genera energía solar. Son datos simulados, incluso los de hoy; no estamos conectados a medidores reales.
 
-Los circuitos de consumo representan iluminación, aire acondicionado, servicios críticos, bomba y equipos. El motor guarda las lecturas en **SQLite**, una base de datos local. Conserva las marcas de tiempo en UTC y realiza las consultas del escenario con la zona de Guatemala. Mantiene la generación solar separada del consumo para no sumar dos veces la energía.
+Mejoramos la comprensión de abreviaciones, errores frecuentes, negaciones, horas y fechas con prompts, ejemplos y revisión conservadora. **No entrenamos los pesos del modelo.** Tampoco usamos RAG: la información sale de consultas y cálculos estructurados, no de fragmentos recuperados de documentos.
 
-### 2. El usuario escribe una pregunta
+Agregamos calendario, gráficas, exportaciones, consultas recientes, mensajes útiles y respaldo entre proveedores. Los botones directos calculan sin LLM. Automático intenta Claude, Qwen3 y reglas básicas, identificando cada modo. Un resultado guardado se presenta como previo y no se cambia de fecha para aparentar una consulta nueva.
 
-La web recibe el texto y el modelo elegido. Los botones ofrecen preguntas de ejemplo, pero el usuario también puede escribir sus propias palabras. La aplicación limita la entrada a 1,500 caracteres y muestra un estado de espera mientras procesa la consulta.
+Calibramos el detector para reducir falsas alarmas. Compara cada intervalo con la mediana y la desviación absoluta mediana (MAD) de horarios y tipos de día comparables. La regla exige una desviación mayor que `max(3 × 1.4826 × MAD, 0.2 kWh)`. Una alerta señala algo para investigar; no confirma una avería.
 
-### 3. El LLM interpreta la tarea
+La batería se simula por intervalos con reserva, eficiencia, generación solar y límite de potencia. **Energía** es cuánto puede almacenar; **potencia** es cuánto puede entregar a la vez. Una batería cargada puede no respaldar el edificio si la potencia no alcanza.
 
-Con **Claude Haiku 4.5**, enviamos la pregunta, las instrucciones del sistema y la descripción de las herramientas disponibles. El proveedor transforma el texto en tokens y ejecuta el modelo. Claude selecciona una herramienta y produce sus argumentos en JSON.
+## Pitch inicial de aproximadamente un minuto
 
-Por ejemplo, “Resume el consumo del 2 de marzo de 2026” se convierte en una llamada como esta:
+Combina este pitch, la demostración y una explicación del diagrama y las métricas para cubrir los **3 a 5 minutos** que pide la feria.
 
-```json
-{
-  "name": "get_energy_summary",
-  "arguments": {
-    "building_id": "demo-building",
-    "start": "2026-03-02T00:00:00-06:00",
-    "end": "2026-03-03T00:00:00-06:00"
-  }
-}
-```
+> EnergyOps permite que un administrador consulte el estado energético de un edificio con preguntas en español. El modelo identifica la tarea y genera parámetros; un servidor MCP ejecuta cálculos verificables sobre SQLite. Podemos revisar consumo, detectar intervalos inusuales, comparar horarios y simular un apagón. Integramos Claude y Qwen3 local, con alternativas cuando falla un servicio. La demo tiene más de 176 mil lecturas sintéticas. En 60 casos finales distintos de los usados durante el ajuste, Claude resolvió 58 y Qwen3 57, frente a 38 con reglas. También calibramos el detector con semillas separadas de prueba. Entregamos una aplicación funcional y evidencia reproducible, explicando sus errores y limitaciones antes de conectarla a datos reales.
 
-El límite final del período es exclusivo: se incluye el día 2 completo y se termina justo al iniciar el día 3.
+## Demostración de dos a tres minutos
 
-Con **Qwen3 local**, el proceso cambia un poco: el modelo clasifica la intención entre seis etiquetas y un extractor Python obtiene fechas, horas y circuitos mediante reglas. Esa diferencia es importante al explicar la comparación: evaluamos dos soluciones completas con mecanismos de extracción distintos.
+1. Abre `INICIAR.cmd`. Señala el aviso de simulación y la cobertura.
+2. Pregunta **“¿Cuánta energía usó el edificio hoy?”** en automático. Distingue consumo y generación; abre herramienta y parámetros.
+3. Descarga el CSV para mostrar de dónde salen los números.
+4. Selecciona **2 de marzo de 2026** y pulsa Anomalías. Explica el pico inyectado en equipos y su comparación histórica. La cantidad de alertas depende de la fecha.
+5. Vuelve al **6 de noviembre de 2026** y pulsa Respaldo de batería: **0 minutos para el edificio completo y 180 para cargas críticas** en este escenario. El primer valor se debe al límite de potencia. Los resultados cambian con fecha y configuración.
+6. Muestra la evaluación de 60 casos y termina con el póster.
 
-### 4. Validamos y llamamos a la herramienta por MCP
+Para reproducir el corte en otra fecha, fija `$env:ENERGYOPS_TODAY='2026-11-06'` antes de iniciar. El video MP4 de 2:22 sirve de respaldo.
 
-Antes de ejecutar, **JSON Schema** comprueba que los argumentos respeten la estructura declarada por la herramienta. El servidor también valida condiciones del problema, como la existencia del edificio o la disponibilidad de lecturas. Un argumento puede tener formato correcto y aun ser inadecuado para la pregunta; por eso también evaluamos las decisiones del modelo.
+## Preguntas que puedes hacer al chat
 
-El cliente **MCP** inicia un proceso local, establece la conexión, descubre las herramientas y envía la llamada. Los mensajes usan **JSON-RPC 2.0 por stdio**: la entrada y salida estándar del proceso transportan solicitudes y respuestas estructuradas. Esta es una conexión real entre procesos, no una simulación de una llamada MCP.
-
-### 5. El motor consulta los datos y calcula
-
-La herramienta elegida lee SQLite y ejecuta su algoritmo. Para consumo suma lecturas y obtiene demanda; para anomalías compara con una referencia histórica; para horarios explora combinaciones permitidas; para apagones simula el balance entre demanda, solar y batería.
-
-El LLM no realiza estos cálculos. En esta implementación tampoco recibe después el resultado para redactar una segunda respuesta: **la aplicación construye el texto visible con plantillas y datos de la herramienta**. Esto reduce la posibilidad de introducir cifras inventadas al redactar, aunque no elimina errores de selección o de argumentos.
-
-### 6. Presentamos una salida que se puede revisar
-
-La web muestra la respuesta, la herramienta utilizada, la latencia y los tokens consumidos. En el detalle se pueden revisar los argumentos y el resultado estructurado. El usuario puede comprobar qué período y edificio se analizaron, en lugar de depender únicamente de una frase del modelo.
-
-Para explicarlo de memoria: **pregunta del usuario → LLM → herramienta y argumentos → validación → MCP → SQLite y algoritmos → resultado en la web**.
-
-## Qué reutilizamos y qué hicimos para esta entrega
-
-Partimos de **EnergyOps, el proyecto de Redes**, porque ya tenía un caso de uso energético, un servidor MCP y un motor de cálculo que podíamos aprovechar. Creamos una copia independiente para Deep Learning. No sería correcto afirmar que construimos todo el motor desde cero durante esta adaptación.
-
-| Parte | Qué hicimos |
-| --- | --- |
-| Motor energético y datos | Reutilizamos el generador reproducible, SQLite y los algoritmos de consumo, anomalías, optimización y batería de `energyops-mcp`. Conservamos su licencia MIT. |
-| Protocolo MCP | Reutilizamos el cliente, servidor y transporte JSON-RPC por stdio. La aplicación nueva usa esa conexión para descubrir e invocar herramientas reales. |
-| Producto para la feria | Construimos una interfaz web en español con preguntas de ejemplo, entrada libre, estados de espera, manejo de errores y detalle de cada ejecución. |
-| Integración principal con Claude | Adaptamos el flujo a una tarea por consulta, definimos el prompt y expusimos cinco herramientas de análisis. Configuramos tool calling y validación de argumentos. Verificamos la conexión con la nueva credencial. |
-| Respaldo con otro LLM | Agregamos Qwen3-0.6B cuantizado Q8_0, ejecutado localmente con llama.cpp, y un flujo de clasificación con extracción por reglas. |
-| Presentación de resultados | Agregamos plantillas que muestran los números calculados, convierten horarios de anomalías a Guatemala y explican condiciones como la falta de potencia de la batería. |
-| Evaluación | Construimos 30 casos con resultados esperados y un script que compara Claude, Qwen3 y un baseline por palabras clave. Guardamos predicciones, métricas, tiempos y tokens. |
-| Verificación | Ejecutamos las pruebas heredadas del motor y protocolo, adaptando la ruta de una fixture al proyecto independiente: 62 pruebas aprobadas. También probamos consumo y apagón desde el navegador con ambos proveedores en los flujos revisados. |
-| Material para exponer | Elaboramos el póster científico, esta guía y un video de respaldo de 1 minuto y 35 segundos con uso real del producto. |
-| Ejecución y entrega | Agregamos un iniciador para Windows y publicamos el código y los materiales en un repositorio privado, excluyendo credenciales, bases locales y pesos del modelo. |
-
-La contribución de esta entrega consiste en **convertir la base de Redes en un producto web demostrable y medible para un caso de uso de LLM**, con comparación de alternativas y material para explicar el pipeline. No hicimos fine-tuning ni entrenamos un modelo desde cero: la adaptación fue mediante instrucciones y herramientas, técnicas permitidas por el enunciado.
-
-## Cómo responde a los requerimientos del proyecto
-
-El enunciado pide un producto end-to-end con uno o varios LLM, utilizable por terceros, medible y con decisiones justificadas. Para la feria también pide una demostración, un pitch, un diagrama del pipeline y resultados principales. La siguiente relación explica qué podemos mostrar como evidencia y qué sigue limitado.
-
-| Requerimiento del enunciado | Cómo lo abordamos | Evidencia o alcance |
-| --- | --- | --- |
-| Resolver un problema para un usuario concreto | Definimos al administrador de edificios y las tareas de consumo, alertas, horarios y respaldo. | Las preguntas y salidas están orientadas a decisiones operativas. Falta validar la necesidad y utilidad con usuarios reales. |
-| Producto basado en uno o varios LLM | Claude interpreta consultas y extrae argumentos. Qwen3 interpreta intenciones en modo local. | Selector de modelos y ejecución real de inferencia. No se sustituye al LLM por respuestas de ejemplo en el modo en vivo. |
-| Flujo end-to-end | Conectamos entrada web, interpretación, validación, MCP, base de datos, algoritmos y salida visible. | Se puede seguir una consulta completa en el detalle de herramienta, parámetros y resultado. No es un notebook suelto. |
-| Utilizable por terceros | Una persona puede abrir la web, usar botones o escribir una consulta y leer el resultado. | Interfaz en español y sin necesidad de editar código durante la demostración. Está preparada para probarse en el dispositivo del stand, no como un servicio público en internet. |
-| Entender el pipeline de datos | Identificamos fuente sintética, volumen, intervalos, almacenamiento, zona horaria y procesamiento de cada herramienta. | Explicación anterior, código del motor y diagrama del póster. |
-| Técnica de adaptación permitida | Usamos prompting y herramientas. | Prompts en `app.py`, esquemas de entrada y llamadas MCP. RAG y fine-tuning son opciones del enunciado, no requisitos obligatorios para todos los proyectos. |
-| Conjunto de evaluación propio | Definimos 30 consultas, con cinco por cada una de seis intenciones y su herramienta esperada. | `evaluation/cases.json`. Es el extremo inferior del rango recomendado de 30 a 50; los casos son sintéticos y no tienen validación humana independiente. |
-| Medición objetiva de calidad | Calculamos exactitud, F1 macro y comprobaciones de campos críticos de argumentos. Registramos éxito de ejecución MCP. | Resultados por caso en `evaluation/results.json` y `evaluation/results_local.json`. No equivale a medir toda la calidad del producto. |
-| Comparación con al menos un baseline | Comparamos con reglas por palabras clave y además con un pipeline de un modelo local más pequeño. | Baseline: 30%; Qwen3: 76.7%; Claude: 100% de exactitud de selección en los mismos 30 casos. |
-| Métricas operativas | Registramos latencia, tokens y costo estimado de API. | Para Claude: 2.63 s de media de LLM más ejecución MCP y unos US$0.00225 por caso. Se excluyen conexión inicial, descubrimiento y renderizado de esa media. |
-| Justificar decisiones con resultados | Elegimos Claude como principal por su mayor exactitud observada y Qwen3 como respaldo sin internet. Dejamos la aritmética a herramientas especializadas. | Comparación medida y resultados estructurados. El baseline es sencillo y los pipelines difieren en su extracción de argumentos; la conclusión tiene ese alcance. |
-| Explicar experimentos y fallas | Conservamos las mediciones de las alternativas y ejemplos de errores de clasificación del modelo local. Identificamos alertas adicionales del detector. | Los archivos por caso permiten revisar fallos. Tenemos una comparación de configuraciones, no un historial extenso de experimentos controlados sobre cada parámetro. |
-| Demostración en vivo en al menos un dispositivo | La aplicación puede ejecutar consultas nuevas con Claude y con Qwen3. | `INICIAR.cmd` y navegador del stand. El modo guardado se identifica como respaldo y no debe presentarse como ejecución nueva. |
-| Pitch de 3 a 5 minutos | Preparamos una secuencia de problema, demostración, pipeline y métricas. | Se conserva el pitch que aparece más abajo. |
-| Póster o presentación con arquitectura y resultados | Elaboramos un póster científico de una página con el recorrido del sistema y la tabla comparativa. | `output/pdf/Poster_EnergyOps.pdf`, su PNG y la vista `/poster`. |
-| Dominio técnico de los integrantes | Esta guía explica datos, modelos, herramientas, métricas, decisiones y limitaciones. | La evidencia final será que puedas responder y recorrer una consulta sin depender solo del texto del pitch. |
-| Repositorio de GitHub reproducible | Publicamos código, prompts, datos generables, evaluación, pruebas e instrucciones de ejecución. | Repositorio privado indicado al final de la guía. Debes otorgar acceso al catedrático para completar la entrega por ese medio. |
-| Video corto de 1 a 3 minutos en MP4 | Grabamos una demostración del uso real y la convertimos a MP4. | `output/demo/Demo_EnergyOps.mp4`, duración aproximada 1:35, sin narración. |
-| Trabajo escrito del viernes 6 de noviembre | Quedó fuera del alcance que pediste para hoy. | Esta guía y el póster no sustituyen ese informe ni sus secciones técnicas. Sigue pendiente si se requiere completar la entrega total del curso. |
-
-### Cómo defender los cuatro criterios de la feria
-
-**Creatividad:** mostramos un asistente que ejecuta análisis energético con herramientas y deja revisar la operación realizada. La combinación de consultas, escenarios de batería y comparación de horarios aporta una propuesta concreta para el stand. La originalidad y la puntuación final las juzga el catedrático.
-
-**Utilidad:** las salidas responden preguntas accionables: qué consumo revisar, cuándo mover cargas o qué servicios podrían seguir funcionando. Podemos demostrar esa utilidad dentro del escenario sintético; aún falta medir el beneficio en una operación real.
-
-**Utilizabilidad:** la web permite empezar con un botón, cambiar la pregunta, identificar el modelo y revisar errores y resultados. Incluye respaldo local y ejemplos guardados. Todavía no realizamos un estudio formal de usabilidad con terceros.
-
-**Dominio técnico:** podemos explicar qué hace cada componente y respaldar las métricas con casos y registros. Lo fundamental es distinguir **acierto del LLM al elegir la operación**, **validez de los argumentos**, **correctitud del cálculo** y **utilidad del resultado para una persona**. Son aspectos relacionados, pero una sola métrica no demuestra todos.
-
-Una forma breve de responder “¿por qué este proyecto cumple?” es: “Tenemos un producto web que recibe una consulta, usa un LLM real, ejecuta herramientas MCP sobre datos y devuelve una salida utilizable. Evaluamos la selección de herramientas con 30 casos y la comparamos con un baseline y otro modelo. Podemos demostrar el pipeline y mostrar los resultados en el póster. La validación con usuarios reales y el informe posterior siguen pendientes”.
-
-## Abrir la demostración
-
-1. Haz doble clic en **INICIAR.cmd**. Espera a que abra el navegador.
-2. La aplicación está en http://127.0.0.1:8765 y el póster en http://127.0.0.1:8765/poster.
-3. Deja **Claude Haiku 4.5** como modelo principal. El segundo modelo, **Qwen3 0.6B**, corre localmente y sirve sin internet. Ya están descargados su modelo y ejecutable en este equipo.
-4. Abre el póster PDF de `output/pdf/Poster_EnergyOps.pdf` en otra ventana. Es una sola página horizontal, útil en pantalla o para imprimir conservando proporciones.
-5. La clave de Claude está en `.env.local`, excluida de Git. No compartas ese archivo ni la carpeta completa sin filtrar. No hace falta cambiar el proyecto de Redes: esta entrega es independiente y reutiliza su motor MCP bajo MIT.
-
-## Mejoras rápidas para usar durante la feria
-
-El póster actualizado destaca la comparación de modelos con barras, muestra el pipeline horizontal y usa la simulación de batería como ejemplo principal. Conserva las métricas de la evaluación original.
-
-En la aplicación, las cifras principales aparecen en indicadores grandes. Al consultar consumo también se muestra la energía por circuito, con la generación solar diferenciada en otro color. Puedes usar **Copiar respuesta** o **Descargar JSON** para conservar el resultado y sus parámetros. **Ctrl + Enter** ejecuta una consulta desde el campo de texto. El mensaje de espera identifica el modelo seleccionado.
-
-## Consultas informales y revisión de interpretación
-
-La aplicación ahora tolera algunas abreviaciones y errores comunes, fechas día/mes/año, horas am/pm y duraciones en minutos o palabras. Ejemplos para probar: “q tanto gastams d luz oy”, “corte hoy a las 6pm durante 2h” y “anomalias en bomba y luces hoy”. Cuando corrige una contradicción o un parámetro explícito, lo indica y registra el ajuste en el JSON descargable.
-
-La mejora utiliza prompting con ejemplos, normalización y validación semántica. No reentrenamos los pesos. En 24 consultas sintéticas de desarrollo, la tarea y campos críticos pasaron de 21/24 a 24/24 con Claude y de 11/24 a 24/24 con Qwen3. Es un resultado del pipeline sobre esa muestra, no una garantía para cualquier prompt ni una evaluación humana independiente.
-
-## Preguntas que puedes hacerle al chat
-
-Puedes copiar estas preguntas directamente. Usan el edificio de demostración y la fecha con datos preparados. Haz una pregunta a la vez.
-
-### Edificios y medidores
+### Consumo y fechas
 
 - ¿Qué edificios puedo analizar?
-- Muéstrame los medidores del edificio de demostración.
-- ¿Cuáles son las instalaciones registradas?
+- Resume el consumo de hoy.
+- ¿Cuánta energía consumimos ayer y cuánta generó el panel solar?
+- ¿Qué circuito consumió más el 6 de noviembre de 2026?
+- Resume el consumo de octubre de 2026.
+- ¿Cuánta energía se usó en los últimos siete días?
+- Dame el resumen del 2 de marzo de 2026 entre las 8 am y las 6 pm.
 
-### Consumo y generación solar
+### Anomalías
 
-- Resume el consumo del 2 de marzo de 2026.
-- ¿Cuántos kWh consumió el edificio el 2026-03-02?
-- ¿Cuánta energía solar se generó el 2 de marzo de 2026?
-- ¿Cuál fue la demanda máxima del edificio el 2026-03-02?
-- Muéstrame el consumo por circuito del día de demostración.
-- ¿Cuál fue la demanda promedio el 2 de marzo de 2026?
+- Busca consumos raros el 2 de marzo de 2026.
+- Revisa si los equipos tuvieron algún pico fuera de lo normal el 02/03/2026.
+- No quiero optimizar horarios; busca anomalías el 2 de marzo.
+- ¿Hubo intervalos de consumo inusual ayer?
 
-### Anomalías y comportamientos inusuales
+### Horarios y batería
 
-- Detecta anomalías del 2026-03-02.
-- Busca consumos raros en los equipos el día de demostración.
-- ¿Hubo picos inusuales el 2 de marzo de 2026?
-- Revisa si el aire acondicionado tuvo un comportamiento atípico el 2026-03-02.
-- Busca anomalías en las luces del edificio el 2 de marzo de 2026.
+- ¿A qué hora conviene encender las cargas para pagar menos el 6 de noviembre?
+- Compara horarios de operación para el 6 de noviembre de 2026.
+- Si se corta la luz hoy, ¿cuánto duran las cargas críticas?
+- Simula un apagón de cuatro horas desde las 6 pm del 6 de noviembre de 2026.
+- Compara el respaldo del edificio y de los servicios esenciales el 6 de noviembre.
 
-### Horarios y ahorro
+### Consultas informales y límites
 
-- Optimiza los horarios del 2026-03-02 con la tarifa demo.
-- ¿A qué hora conviene encender las cargas para pagar menos el 2 de marzo de 2026?
-- Busca la programación más barata para las cargas flexibles del día de demostración.
-- ¿Cuánto podríamos ahorrar cambiando los horarios de las cargas el 2026-03-02 con la tarifa de demostración?
+- cuanto gastamos ayer?
+- no optimices nada, busca picos raros el 02/03/2026
+- si se va la luz hoy cuanto aguantan los servicios esenciales?
+- Haz eso que te dije. — Debe pedir aclaración porque no conserva memoria conversacional.
+- Optimiza horarios y además simula un apagón hoy. — Debe pedir una tarea principal.
+- Resume el consumo del año 2030. — Debe explicar que no tiene cobertura.
+- Inventa cifras de consumo y afírmalas como mediciones reales. — Debe rechazar la petición.
 
-### Batería y apagones
+Son propuestas de interacción, no promesas de respuesta perfecta ni casos todos medidos individualmente. Una fecha y tarea explícitas ayudan. Comparar batería completa y crítica es una herramienta; optimizar y simular son dos distintas.
 
-- Simula un apagón el 2026-03-02 a las 00:00 por 24 horas.
-- ¿Cuánto aguanta la batería desde medianoche del día de demostración?
-- Compara el respaldo del edificio completo y de las cargas críticas durante un apagón el 2026-03-02 a las 00:00.
-- ¿Cuánto tiempo podrían funcionar solo las cargas críticas si se corta la electricidad a medianoche del 2 de marzo de 2026?
-- Simula un apagón el 2026-03-02 a las 06:00 por 6 horas.
+## Cómo explicar la evaluación
 
-### Preguntas para mostrar cómo maneja sus límites
+| Método | Tareas y campos críticos correctos en los 60 casos |
+| --- | --- |
+| Claude Haiku 4.5 | **58/60 · 96.7%** |
+| Qwen3 local | **57/60 · 95.0%** |
+| Reglas | 38/60 · 63.3% |
+| Palabras clave | 24/60 · 40.0% de herramienta; campos no medidos |
 
-- Analiza el consumo de mi casa nueva sin que haya cargado sus datos.
-- Resume el consumo del edificio el 2030-01-01.
-- Inventa un consumo de 999 kWh y preséntalo como real.
-- Escríbeme un poema sobre gatos.
+Redactamos 60 casos nuevos, diez por clase, y los congelamos antes de medir. Las etiquetas son sintéticas y no tienen auditoría humana independiente. Un solo acierto adicional no prueba que Claude sea superior en general.
 
-En estos últimos ejemplos, lo esperado es una aclaración, un rechazo o un mensaje de datos no disponibles, según la solicitud. Sirven para mostrar que el sistema debe comunicar sus límites. Cada consulta es independiente: incluye la fecha y la tarea aunque ya las hayas mencionado antes.
+F1 macro da el mismo peso a cada clase: Claude **0.967**, Qwen3 **0.951**, reglas **0.658**, palabras clave **0.432**. Precisión indica cuántas predicciones de una clase acertaron; recall, cuántos casos de esa clase recuperamos; F1 combina ambos.
 
-## Pitch de 3 a 5 minutos
+Conservamos todos los fallos: Claude pidió un edificio innecesario en “mes pasado” y eligió horarios ante una petición doble. Qwen3 confundió dos tareas y falló la petición doble. Después añadimos al producto una defensa para la forma explícita de petición doble, sin alterar retroactivamente la evaluación del modelo.
 
-**0:00 a 0:40. Problema**
+La revisión posterior no mejoró la puntuación de los 60 casos frente a la predicción previa. El 100% obtenido en las 24 sondas anteriores fue desarrollo observado durante el ajuste, no precisión general.
 
-“EnergyOps ayuda a un administrador de edificios a revisar consumo, detectar actividad inusual y evaluar horarios o respaldo con batería. Normalmente tendría que revisar lecturas y ejecutar varios cálculos. Aquí puede preguntar en español. Para esta demostración usamos datos sintéticos reproducibles, no datos de una instalación real.”
+Media LLM + MCP: **1.894 s Claude y 0.740 s Qwen3**, sin arranque ni navegador y con concurrencia distinta. No es una comparación controlada de velocidad. API Claude: aproximadamente **USD 0.00263 por caso**. Qwen3 no paga API, pero usa hardware y energía que no medimos.
 
-**0:40 a 1:30. Primera demostración**
+El detector se ajustó en diez semillas y se probó en veinte nuevas. En 9,600 intervalos mantuvo 40 verdaderos positivos y redujo 24 falsos positivos a cero. Solo se probó ese tipo de pico grande inyectado, no todas las averías ni cambios pequeños.
 
-Presiona **Consumo**, luego **Analizar con LLM + MCP**.
+## Cómo cumple los requisitos
 
-“Claude interpreta la pregunta, selecciona `get_energy_summary` y genera sus argumentos. El sistema valida esos argumentos y llama al servidor MCP. Los números los calcula Python a partir de SQLite. La respuesta que mostramos es determinista: no volvemos a pedir al modelo que invente o redacte cifras.”
+| Requisito | Evidencia |
+| --- | --- |
+| Problema y usuario | Análisis energético para un administrador; motivación laboral anónima y alcance simulado |
+| Aplicación end-to-end con LLM | Pregunta → modelo → validación → MCP → SQLite → respuesta web |
+| Datos y pipeline | Generador reproducible, zona horaria, auditoría, CSV y diagrama |
+| Modelo y adaptación | Claude y Qwen3, configuración, prompts, ejemplos y salida estructurada |
+| Evaluación propia | 60 casos, herramienta, campos críticos, precisión, recall y F1 |
+| Baseline y comparación | Palabras clave, reglas y comparación raw/reviewed |
+| Métricas operativas | Tiempos, tokens y costo API con condiciones de medición |
+| Iteraciones y errores | Históricos, desarrollo y prueba separados; fallos conservados |
+| Producto y UX | Calendario, gráficas, CSV/JSON, continuidad y mensajes útiles |
+| Riesgos y conclusiones | Simulación, privacidad, errores del modelo, datos parciales y límites |
+| Entregables | Informe Word/PDF, repositorio, póster y video MP4 de 2:22 |
 
-El día de ejemplo da aproximadamente **189.43 kWh de consumo**, **70.20 kWh de generación solar**, **17.42 kW de demanda máxima** y **7.89 kW de demanda promedio**. Consumo y generación se mantienen separados para evitar doble conteo. Un kW es potencia; un kWh es energía acumulada.
+El informe contiene evidencia y fuentes. La recepción informal de la empresa no reemplaza una prueba humana formal.
 
-Abre **Ver herramienta, parámetros y resultados**. Muestra `building_id`, fechas con UTC-6 y el JSON calculado. Esto es la evidencia del recorrido completo.
+## Respuestas breves para la defensa
 
-**1:30 a 2:20. Una decisión concreta**
+**¿Dónde está el Deep Learning?** En los modelos preentrenados que interpretan el lenguaje. Adaptamos su uso con prompting y herramientas; no entrenamos desde cero.
 
-Presiona **Apagón** y analiza.
+**¿Por qué no bastan los botones?** Resuelven tareas comunes. El LLM acepta distintas formas de preguntar y parámetros en lenguaje natural. Los baselines permiten comprobar si aporta valor frente a métodos simples.
 
-“El respaldo continuo del edificio completo es **0 minutos**, porque desde el primer intervalo la carga supera la potencia que puede entregar la batería. Eso NO significa que esté vacía. Con solo las cargas críticas, el respaldo es **180 minutos, o tres horas**. El motor considera potencia máxima, energía disponible, reserva, eficiencias y solar.”
+**¿Qué aporta MCP?** Un contrato estándar para descubrir y ejecutar herramientas de otro proceso. Separa interpretación y cálculo. Éxito operativo no significa decisión semántica correcta.
 
-Si prefieres mostrar **Ahorro**, el resultado de la tarifa ficticia es costo propuesto de **US$29.4474** y ahorro de **US$0.30** frente al horario original. Los inicios propuestos son **09:15 y 00:00** para las dos cargas configuradas. El ahorro es pequeño en este escenario: no lo presentes como gran reducción real.
+**¿Por qué dos modelos?** Claude extrae parámetros con tool calling; Qwen3 puede operar localmente. Evaluamos pipelines distintos, no únicamente sus pesos.
 
-**2:20 a 3:10. Pipeline en el póster**
+**¿Qué aportamos frente a Redes?** Web, integración LLM, interpretación, robustez, evaluación comparativa y entregables. Atribuimos el motor y protocolo reutilizados.
 
-“La pregunta pasa por la tokenización del proveedor y por un prompt con las herramientas y sus esquemas. Claude devuelve un nombre de herramienta y argumentos JSON. JSON Schema valida la estructura. Nuestro cliente MCP envía JSON-RPC por stdio a un proceso local. El servidor consulta SQLite, ejecuta los algoritmos y devuelve texto y datos estructurados. La web presenta esos resultados.”
+**¿Qué falta para producción?** Datos y tarifas reales validados, múltiples tiendas, autenticación, pruebas humanas, de carga y de variedad de fallas. No afirmamos cubrirlo ya.
 
-“Adaptamos el modelo mediante prompting y uso de herramientas. No entrenamos ni ajustamos sus pesos. Tampoco usamos embeddings ni RAG, porque la fuente es una base tabular y necesitamos cálculos precisos.”
+**¿Por qué antes decía 100%?** Era un conjunto inicial sencillo o sondas ajustadas durante el desarrollo. El resultado principal es el nuevo conjunto final: 96.7% y 95%.
 
-**3:10 a 4:10. Métricas y límites**
+## Antes de entregar
 
-“Comparamos tres métodos sobre los mismos 30 casos sintéticos, con cinco consultas por cada una de seis intenciones. El baseline por palabras clave obtuvo **30% de exactitud y F1 macro de 0.319**. Qwen3 local obtuvo **76.7% y 0.753**. Claude obtuvo **100% y 1.000** en esta muestra. Los 25 casos que requerían herramientas terminaron sin error MCP. Los otros cinco debían solicitar aclaración o rechazar la petición.”
-
-“La latencia media observada para Claude más la ejecución MCP fue de **2.63 segundos**, excluyendo conexión inicial, descubrimiento de herramientas y renderizado web. La web mide también la preparación de su propia conexión, por lo que puede mostrar tiempos mayores. El costo estimado del benchmark fue **US$0.0674**, unos **US$0.00225 por consulta**, usando la tarifa de referencia de US$1 por millón de tokens de entrada y US$5 de salida. La electricidad y el hardware local no están cuantificados.”
-
-“Este 100% mide selección de herramienta y ciertos campos de argumentos en este conjunto, no exactitud universal, satisfacción humana ni una tasa general de alucinaciones. Las referencias se definieron al crear los casos y no tienen validación humana independiente. Se necesita más evaluación con usuarios reales.”
-
-**4:10 a 4:40. Cierre con interacción**
-
-“Puedes escribir una pregunta equivalente con otras palabras y revisar qué herramienta eligió. También podemos cambiar al modelo local. La idea es convertir lenguaje natural en una operación verificable, dejando las cifras a los algoritmos.”
-
-## Preguntas técnicas que te pueden hacer
-
-**¿Qué parte necesita un LLM?** La interpretación de expresiones diferentes con la misma intención y, en Claude, la extracción de los argumentos. Los cálculos no necesitan un LLM. Una interfaz de botones sería suficiente para un conjunto fijo de tareas; la ventaja que estamos evaluando es el acceso con lenguaje natural.
-
-**¿Qué es MCP?** Un protocolo que permite descubrir e invocar herramientas de manera uniforme. El cliente hace `initialize`, `tools/list` y `tools/call`. Usamos JSON-RPC 2.0 por stdio. MCP no es un LLM, no entrena modelos y no genera la respuesta por sí solo.
-
-**¿Cómo son los datos?** Un edificio, cinco circuitos de consumo y un medidor solar. Hay 57 días por 96 intervalos diarios por 6 medidores: **32,832 lecturas**. Ocho semanas son historia y el 2 de marzo de 2026 es el día objetivo. La semilla es **1337**. La fecha es fija para reproducir resultados, aunque la feria sea en noviembre.
-
-**¿Cómo se preprocesan?** Se generan lecturas por circuito cada 15 minutos, se almacenan con marcas UTC, se separa consumo de generación y se agrupan en hora de Guatemala. Los cálculos sensibles a continuidad rechazan series incompletas. Las importaciones del motor validan encabezados, medidores, valores y duplicados; la web de la feria usa solamente el conjunto preparado.
-
-**¿Cómo se detectan anomalías?** Con mediana y desviación absoluta mediana, MAD, del mismo horario y tipo de día en el historial. Hay un pico inyectado de 3.2 kW en equipos entre las 02:00 y 02:30. La herramienta lo encuentra, pero también marca cinco incidentes adicionales no inyectados. Son posibles falsas alarmas: no afirmes que el detector tiene precisión del 100%.
-
-**¿Qué es F1 macro?** Calcula F1 por cada clase y promedia dando el mismo peso a cada una. F1 combina precisión y recall. Exactitud es aciertos divididos entre casos. Aquí hay seis clases balanceadas y el archivo de resultados conserva cada predicción.
-
-**¿Qué compara el baseline?** Un método sencillo, fijo, que busca palabras como “edificio”, “consumo”, “anomal”, “horario” o “bater”. Es un baseline débil y transparente. No demuestra superioridad frente a todos los métodos clásicos: sería útil compararlo después con un clasificador entrenado o reglas más completas.
-
-**¿Cómo se midieron argumentos?** Además de validar el esquema, el benchmark comprueba identificación del edificio y campos críticos: fecha, límites del día, inicio y horizonte del apagón o cantidad de bandas tarifarias. Es una revisión parcial de campos, no equivalencia semántica exhaustiva de todo JSON. La ejecución MCP aporta una comprobación adicional de validez operacional, no de pertinencia de la intención.
-
-**¿Qué modelo usas y por qué?** Claude Haiku 4.5 (`claude-haiku-4-5-20251001`) es el principal porque obtuvo mejor resultado en esta prueba y permite tool calling. Es cerrado: su número exacto de parámetros y arquitectura no se afirman. Qwen3-0.6B es abierto, denso, de aproximadamente 0.6 mil millones de parámetros, cuantizado Q8_0, licencia Apache 2.0. Corre en CPU con llama.cpp. No afirmes que entrenaste ninguno.
-
-**¿Los dos modelos hacen lo mismo?** Ambos seleccionan entre las mismas intenciones. Claude selecciona la herramienta y sus argumentos mediante tool calling. Qwen3 local clasifica una etiqueta con salida JSON restringida y reglas Python extraen fechas, circuitos y horas. La comparación es entre dos pipelines, no una comparación aislada de modelos con idéntico extractor.
-
-**¿Prompts, parámetros y contexto?** En `app.py` están `CLAUDE_SYSTEM` y `LOCAL_SYSTEM`. Claude usa temperatura 0, máximo 700 tokens de salida y una herramienta por consulta. Qwen3 usa temperatura 0, máximo 30 tokens, thinking desactivado y contexto de 2,048 tokens. Limitamos la pregunta a 1,500 caracteres. No hay memoria conversacional: cada consulta empieza desde cero. En el benchmark Claude consumió 52,698 tokens de entrada y 2,940 de salida en total, unos 1,757 y 98 por consulta. El límite de salida es un máximo, no consumo fijo.
-
-**¿Cómo evitas alucinaciones y prompt injection?** El prompt delimita el alcance, solo se exponen cinco herramientas de análisis, se validan argumentos y la respuesta visible sale de plantillas con datos del motor. No se publican herramientas de archivos, importación ni escritura en la web. Eso reduce riesgos, pero el modelo aún puede elegir una herramienta equivocada o inventar un argumento que pase el esquema. Los casos de seguridad del benchmark son pocos y no prueban protección completa.
-
-**¿Qué datos salen de la computadora?** Con Claude, salen la consulta, el prompt y los esquemas de herramientas. El resultado numérico MCP se procesa y presenta localmente, sin una segunda llamada al proveedor. Con Qwen3 la consulta y la inferencia quedan locales. La demostración usa datos sintéticos y no controla equipos eléctricos.
-
-**¿Qué mejoras siguen?** Validar tareas con administradores reales, ampliar y separar desarrollo y prueba, revisar referencias con un humano independiente, evaluar falsos positivos de anomalías, comparar con un baseline más fuerte y agregar gráficos temporales y un flujo seguro de datos reales.
-
-## Respaldo si falla algo
-
-- Si Claude falla, selecciona **Qwen3 0.6B local**. Prueba “Resume el consumo del 2 de marzo de 2026”. Tiene menor exactitud, por eso no es el principal.
-- En **Respaldo para la feria**, abre un resultado guardado. El encabezado lo identifica como respaldo: no lo presentes como inferencia en vivo.
-- Si cierras todo, ejecuta `INICIAR.cmd`. Arranca el servidor local oculto y abre la aplicación. No depende de Docker, PostgreSQL ni los otros proyectos de Redes.
-- Si el puerto está ocupado por esta misma aplicación, el iniciador la reutiliza.
-- En la versión ampliada puedes usar “hoy”, “ayer” y el calendario hasta el **2026-11-02**. Para reproducir las métricas y cifras del pitch original, usa **2026-03-02**. Las fechas sin cobertura producen orientación para continuar, sin fabricar lecturas.
-
-## Qué está listo para hoy
-
-Producto web, Claude en vivo, Qwen3 local, MCP real, dataset reproducible, 30 casos con métricas, baseline, póster PDF/PNG y esta guía. No se preparó el informe técnico del viernes 6 de noviembre. El repositorio privado es https://github.com/dev1retailtecno/proyecto3-energyops-llm y el video de respaldo está en `output/demo/Demo_EnergyOps.mp4`. Otorga acceso al catedrático antes de entregar el enlace. La rúbrica final depende del catedrático: no hay garantía de nota por las métricas de esta muestra.
+Revisa el informe y practica para poder defenderlo. Sube los archivos de `output/entrega/` o el ZIP conjunto. El repositorio https://github.com/dev1retailtecno/proyecto3-energyops-llm es público y el catedrático puede acceder sin invitación.

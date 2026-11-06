@@ -178,9 +178,15 @@ def _get_energy_summary(args: dict[str, Any]) -> CallToolResult:
     start_utc, end_utc = _parse_when(args["start"]), _parse_when(args["end"])
     if end_utc <= start_utc:
         raise ValueError("end must be after start")
+    if any(dt.minute % 15 or dt.second or dt.microsecond for dt in (start_utc,end_utc)):
+        raise ValueError('summary boundaries must align with fifteen-minute intervals')
 
     meters = building["meters"]
     rows = storage.readings_in_range(conn, [m["id"] for m in meters], to_utc_iso(start_utc), to_utc_iso(end_utc))
+    if not rows:
+        raise ValueError('no readings found for the requested period')
+    intervals=int((end_utc-start_utc).total_seconds()//900)
+    is_partial=len(rows)!=intervals*len(meters)
     meter_by_id = {m["id"]: m for m in meters}
 
     by_meter: dict[str, list[float]] = {m["id"]: [] for m in meters}
@@ -228,6 +234,8 @@ def _get_energy_summary(args: dict[str, Any]) -> CallToolResult:
             "average_demand_kw": round(average_demand_kw, 4),
             "per_circuit_kwh": per_circuit,
             "data_quality": quality,
+            "is_partial": is_partial,
+            "interpretation": 'Observed readings only; totals and demand may be underestimated.' if is_partial else 'Complete meter intervals for the requested period.',
         },
     )
 

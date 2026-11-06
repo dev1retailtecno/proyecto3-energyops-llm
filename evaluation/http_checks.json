@@ -1,0 +1,67 @@
+{
+  "timestamp": "2026-11-06T07:00:25.211292-06:00",
+  "scope": "Live HTTP checks, direct MCP only; no inference or production uptime claim.",
+  "passed": 15,
+  "checks": [
+    {
+      "check": "health",
+      "passed": true
+    },
+    {
+      "check": "full November 6 day",
+      "passed": true
+    },
+    {
+      "check": "CSV download",
+      "passed": true
+    },
+    {
+      "check": "CSV exact rows and schema",
+      "passed": true
+    },
+    {
+      "check": "direct real MCP summary",
+      "passed": true
+    },
+    {
+      "check": "dashboard agrees with MCP",
+      "passed": true
+    },
+    {
+      "check": "CSV balances with dashboard",
+      "passed": true
+    },
+    {
+      "check": "invalid CSV period helpful",
+      "passed": true
+    },
+    {
+      "check": "foreign Origin blocked",
+      "passed": true
+    },
+    {
+      "check": "malformed JSON handled",
+      "passed": true
+    },
+    {
+      "check": "multiple tasks",
+      "passed": true
+    },
+    {
+      "check": "outside coverage",
+      "passed": true
+    },
+    {
+      "check": "direct real MCP battery",
+      "passed": true
+    },
+    {
+      "check": "/poster.pdf",
+      "passed": true
+    },
+    {
+      "check": "/report.pdf",
+      "passed": true
+    }
+  ]
+}

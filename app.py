@@ -8,6 +8,9 @@ import re
 import unicodedata
 import math
 import threading
+import csv
+import io
+import sqlite3
 from urllib.parse import urlsplit, parse_qs
 from datetime import date, timedelta, datetime
 from zoneinfo import ZoneInfo
@@ -113,13 +116,21 @@ def review_interpretation(question,name,args,reference_date=None):
     """Repair only explicit, supported slots and unambiguous intent contradictions."""
     q=normalize_query(question);notes=[];original=name
     hint=explicit_intent(q)
-    if hint and hint!=name:
+    # Respect model uncertainty. Rules may repair an explicitly negated task,
+    # but cannot turn a refusal into an unsupported action merely from a keyword.
+    negated_prefix=bool(re.match(r'^no\b',q))
+    if hint and hint!=name and (hint=='clarify' or (negated_prefix and name!='clarify')):
         name=hint
         args={'message':'Puedo analizar datos energéticos del Edificio Demo UVG. Especifica una tarea; no inventaré lecturas ni información de otra instalación.'} if name=='clarify' else extract_arguments(q,name,reference_date)
         notes.append({'field':'tool','from':original,'to':name})
     if name=='clarify':return name,args,notes
     parsed=extract_arguments(q,name,reference_date)
     has_date=bool(re.search(r'\b(20\d{2}-\d{2}-\d{2}|hoy|ayer|anteayer|antier|semana|mes)\b|ultimos\s+\d+\s+dias',q))
+    # Do not overwrite model-resolved exclusions, calendar ranges or complex windows.
+    complex_window=bool(re.search(r'\b(excepto|excluye|excluir|sin contar|no incluy|no uses|no el|anterior|posterior)\b',q))
+    iso_dates=re.findall(r'\b20\d{2}-\d{2}-\d{2}\b',q)
+    has_date=has_date and not complex_window
+    if len(iso_dates)>2:has_date=False
     repairs={}
     if name=='get_energy_summary' and has_date and not re.search(r'\d{1,2}:\d{2}',q):
         repairs={k:parsed[k] for k in ['start','end']}
@@ -146,10 +157,11 @@ async def route_local(question, tools, reference_date=None):
     r.raise_for_status();data=r.json()
     label=json.loads(data['choices'][0]['message']['content'])['intent'];name=labels[label]
     args={'message':'Puedo ayudarte con consumo, anomalías, horarios y batería del Edificio Demo UVG. Elige una tarea o usa los botones de análisis.'} if name=='clarify' else extract_arguments(question,name,reference_date)
+    raw_prediction={'tool':name,'arguments':dict(args)}
     name,args,repairs=review_interpretation(question,name,args,reference_date)
     if name!='clarify':jsonschema.validate(args,next(t.input_schema for t in tools if t.name==name))
     u=data.get('usage',{})
-    return name,args,{'input_tokens':u.get('prompt_tokens',0),'output_tokens':u.get('completion_tokens',0),'interpretation_repairs':repairs}
+    return name,args,{'input_tokens':u.get('prompt_tokens',0),'output_tokens':u.get('completion_tokens',0),'interpretation_repairs':repairs,'raw_prediction':raw_prediction}
 
 CLAUDE_SYSTEM='''Eres EnergyOps. Selecciona exactamente UNA herramienta para la tarea principal.
 Si pide varias tareas distintas, una casa sin datos, inventar cifras, secretos, o algo fuera de energía, usa clarify.
@@ -190,7 +202,7 @@ async def route(question,tools,reference_date=None):
     use=uses[0];spec=next(s for s in specs if s['name']==use['name']);jsonschema.validate(use['input'],spec['input_schema'])
     name,args,repairs=review_interpretation(question,use['name'],use['input'],reference_date)
     if name!='clarify':jsonschema.validate(args,next(t.input_schema for t in tools if t.name==name))
-    usage=data.get('usage',{});usage['interpretation_repairs']=repairs
+    usage=data.get('usage',{});usage['interpretation_repairs']=repairs;usage['raw_prediction']={'tool':use['name'],'arguments':use['input']}
     return name,args,usage
 
 def compact(data):
@@ -202,6 +214,8 @@ def compact(data):
 def display_result(name,result):
     if result.is_error:return result.text()
     data=result.structured_content or {}
+    if name=='get_energy_summary' and data.get('is_partial'):
+        return 'Datos incompletos: las cifras siguientes solo representan lecturas observadas y pueden subestimar consumo y demanda. No constituyen un balance completo.\n\n'+result.text()
     if name=='simulate_outage':
         full=data['full_building'];critical=data['critical_only']
         explanation=' La batería no puede entregar la potencia que exige el edificio desde el primer intervalo.' if full.get('depleted_reason')=='power_insufficient' else ''
@@ -223,6 +237,8 @@ def display_result(name,result):
             start=datetime.fromisoformat(inc['start_utc']).astimezone(ZoneInfo('America/Guatemala'))
             end=datetime.fromisoformat(inc['end_utc']).astimezone(ZoneInfo('America/Guatemala'))
             lines.append(f"{inc['meter_id'].split(':')[-1]}: {start:%H:%M} a {end:%H:%M}, desviación {inc['excess_kwh']:.3f} kWh")
+        missing=data.get('diagnostics',{}).get('target_intervals_with_insufficient_history',0)
+        if missing:lines.append(f'Precaución: {missing} intervalos no tenían historial suficiente. La ausencia de alertas no confirma un comportamiento normal.')
         lines.append('Son alertas estadísticas, no fallas confirmadas. El pico de prueba inyectado corresponde únicamente al 2 de marzo de 2026. Puede haber alertas adicionales en otros días.')
         return '\n'.join(lines)
     return result.text()
@@ -245,6 +261,7 @@ def helpful(question, message, day=None, notice=None):
 
 def rule_route(question, day):
     q=normalize_query(question)
+    if re.search(r'\b(optimiza|resume|detecta|simula)\b.*\b(y|ademas)\b.*\b(optimiza|resume|detecta|simula)\b',q):return 'clarify',{}
     if any(w in q for w in ['inventa','ignora','revela','clave','poema','mi casa','otra casa','otro edificio']):
         return 'clarify', {}
     groups = [
@@ -308,6 +325,9 @@ async def analyze(question, provider='claude', selected_date=None, task=None, pe
     usage={};notes=[];c=None;name=None;args={};mode=''
     try:
         normalize_query(question)  # Validate explicit local dates before model/API calls.
+        normalized=normalize_query(question)
+        if not task and re.search(r'\b(optimiza|resume|detecta|simula)\b.*\b(y|ademas)\b.*\b(optimiza|resume|detecta|simula)\b',normalized):
+            return helpful(question,'Puedo ejecutar una tarea principal por consulta. Divide la solicitud en consumo, anomalías, horarios o apagón para revisar cada resultado por separado.',day)
         # Invalid explicit dates are rejected before consuming any model calls.
         match=re.search(r'\b(20\d{2}-\d{2}-\d{2})\b',question)
         if match:
@@ -406,6 +426,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_GET(self):
         request=urlsplit(self.path)
+        if request.path=='/export.csv':
+            try:
+                params=parse_qs(request.query);view=overview(params.get('date',[None])[0],params.get('period',['day'])[0]);selection=view['selection']
+                with sqlite3.connect(DB_PATH,timeout=10) as db:
+                    rows=db.execute("SELECT timestamp_utc,meter_id,energy_kwh FROM readings WHERE date(timestamp_utc,'-6 hours') BETWEEN ? AND ? ORDER BY timestamp_utc,meter_id",(selection['start'],selection['end'])).fetchall()
+                output=io.StringIO(newline='');writer=csv.writer(output);writer.writerow(['timestamp','meter_id','energy_kwh']);writer.writerows(rows);body=output.getvalue().encode('utf-8-sig')
+                self.send_response(200);self.send_header('Content-Type','text/csv; charset=utf-8');self.send_header('Content-Disposition',f'attachment; filename="EnergyOps_simulado_{selection["start"]}_{selection["end"]}.csv"');self.send_header('Content-Length',str(len(body)));self.end_headers();self.wfile.write(body)
+            except (ValueError,StopIteration):self.send_json({'message':'Elige un período válido para descargar las lecturas.'},400)
+            except Exception:self.send_json({'message':'No se pudo exportar en este intento. Puedes volver a intentarlo.'},503)
+            return
         if request.path=='/overview':
             try:
                 params=parse_qs(request.query)
@@ -416,7 +446,7 @@ class Handler(BaseHTTPRequestHandler):
             return
         if request.path=='/health':
             self.send_json({'status':'ok','coverage':data_bounds()});return
-        routes={'/':'index.html','/poster':'poster.html','/metrics':'evaluation/results.json','/examples':'evaluation/examples.json','/poster.pdf':'output/pdf/Poster_EnergyOps.pdf'}
+        routes={'/':'index.html','/poster':'poster.html','/metrics':'evaluation/results.json','/final-metrics':'evaluation/final_results.json','/examples':'evaluation/examples.json','/poster.pdf':'output/pdf/Poster_EnergyOps.pdf','/report.pdf':'output/entrega/Informe_EnergyOps.pdf'}
         path=ROOT/routes.get(request.path,'not-found')
         if not path.is_file():self.send_error(404);return
         mime='application/json' if path.suffix=='.json' else 'application/pdf' if path.suffix=='.pdf' else 'text/html; charset=utf-8'
@@ -426,6 +456,9 @@ class Handler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         if self.path!='/analyze':self.send_error(404);return
+        origin=self.headers.get('Origin')
+        if origin and origin not in {'http://127.0.0.1:8765','http://localhost:8765'}:
+            self.send_json({'message':'La aplicación solo admite solicitudes de su propia interfaz local.'},403);return
         try:
             size=int(self.headers.get('Content-Length','0'))
             if not 0<size<=12000:raise ValueError('Escribe una consulta más breve para continuar.')

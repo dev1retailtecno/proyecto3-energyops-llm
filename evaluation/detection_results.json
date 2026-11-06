@@ -1,0 +1,118 @@
+{
+  "development_seeds": [
+    100,
+    101,
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109
+  ],
+  "test_seeds": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    1006,
+    1007,
+    1008,
+    1009,
+    1010,
+    1011,
+    1012,
+    1013,
+    1014,
+    1015,
+    1016,
+    1017,
+    1018,
+    1019
+  ],
+  "unit": "meter interval, 15 minutes",
+  "truth": "Only the injected equipment spike on the target day is labelled positive. Normal stochastic excursions are negatives. Synthetic detection scenario only.",
+  "calibration": [
+    {
+      "floor_kwh": 0.1,
+      "tp": 20,
+      "fp": 19,
+      "fn": 0,
+      "tn": 4761,
+      "precision": 0.5128205128205128,
+      "recall": 1.0,
+      "f1": 0.6779661016949152,
+      "false_positive_rate": 0.0039748953974895395
+    },
+    {
+      "floor_kwh": 0.15,
+      "tp": 20,
+      "fp": 5,
+      "fn": 0,
+      "tn": 4775,
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1": 0.888888888888889,
+      "false_positive_rate": 0.0010460251046025104
+    },
+    {
+      "floor_kwh": 0.2,
+      "tp": 20,
+      "fp": 0,
+      "fn": 0,
+      "tn": 4780,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0
+    },
+    {
+      "floor_kwh": 0.25,
+      "tp": 20,
+      "fp": 0,
+      "fn": 0,
+      "tn": 4780,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0
+    },
+    {
+      "floor_kwh": 0.3,
+      "tp": 20,
+      "fp": 0,
+      "fn": 0,
+      "tn": 4780,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0
+    }
+  ],
+  "selected_floor_kwh": 0.2,
+  "holdout_original": {
+    "floor_kwh": 0.1,
+    "tp": 40,
+    "fp": 24,
+    "fn": 0,
+    "tn": 9536,
+    "precision": 0.625,
+    "recall": 1.0,
+    "f1": 0.7692307692307693,
+    "false_positive_rate": 0.002510460251046025
+  },
+  "holdout_selected": {
+    "floor_kwh": 0.2,
+    "tp": 40,
+    "fp": 0,
+    "fn": 0,
+    "tn": 9560,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "false_positive_rate": 0.0
+  }
+}
